@@ -8,22 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- RESET & GLOBAL STYLES --- */
+        /* --- GLOBAL & VARIABLES --- */
         :root {
-            --primary-color: #ff6b6b; /* Màu đỏ hồng điểm nhấn */
+            --primary-color: #ff6b6b;
+            --primary-hover: #ff5252;
             --bg-color: #f3f4f6;
             --card-bg: #ffffff;
             --text-color: #374151;
             --text-light: #6b7280;
             --border-radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -38,16 +35,14 @@
             padding: 20px 10px;
         }
 
-        /* --- CONTAINER --- */
         .container {
             width: 100%;
-            max-width: 680px; /* Độ rộng giống các trang bio link */
+            max-width: 680px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* --- CARDS UTILITY --- */
         .card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
@@ -55,247 +50,144 @@
             box-shadow: var(--shadow);
             transition: transform 0.2s ease;
         }
-        
-        /* Hiệu ứng highlight text từ file cũ */
-        .highlight {
-            font-weight: bold; 
-            font-size: 1.1em;
-            color: var(--primary-color);
-        }
 
-        .dashed-strikethrough {
-            text-decoration-line: line-through;
-            text-decoration-color: var(--primary-color);
-            text-decoration-thickness: 2px;
-            opacity: 0.7;
-        }
-        
-        .chu-nho {
-            font-size: 0.75em;
-            color: var(--text-light);
-            font-style: italic;
-        }
-
-        /* --- HEADER / PROFILE SECTION --- */
-        .profile-header {
-            text-align: center;
-            padding-bottom: 30px;
-        }
-
+        /* --- PROFILE --- */
+        .profile-header { text-align: center; }
         .avatar-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px;
+            position: relative; width: 120px; height: 120px; margin: 0 auto 15px;
         }
-
         .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
-
         .status-badge {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            background: #10b981;
-            border: 3px solid white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+            position: absolute; bottom: 5px; right: 5px; background: #10b981;
+            border: 3px solid white; width: 20px; height: 20px; border-radius: 50%;
         }
-
-        .profile-name {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-            color: #111827;
-        }
-
+        .profile-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; color: #111827; }
+        .dashed-strikethrough { text-decoration: line-through solid var(--primary-color) 2px; }
         .profile-bio {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            font-style: italic;
-            background: #fff0f0;
-            padding: 10px 15px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-top: 10px;
+            font-size: 0.95rem; color: var(--text-light); font-style: italic;
+            background: #fff0f0; padding: 10px 15px; border-radius: 12px;
+            display: inline-block; margin-top: 10px;
         }
 
-        /* --- STORY SECTION --- */
-        .story-content h2 {
-            font-size: 1.25rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #1f2937;
-        }
-
-        .story-content p {
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-            text-align: justify;
-        }
-
-        /* --- FUNDING PACKAGES (Cards layout) --- */
-        .package-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
+        /* --- PACKAGE ITEMS --- */
+        .package-list { display: flex; flex-direction: column; gap: 15px; }
+        
         .package-item {
             background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            border: 2px solid #e5e7eb; /* Viền mặc định */
             border-radius: 12px;
             padding: 15px;
             display: flex;
             align-items: flex-start;
             gap: 15px;
-            transition: all 0.3s ease;
             cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .package-item:hover {
+        .package-item:hover { transform: translateY(-2px); background: #fffbfb; }
+
+        /* Class được thêm vào khi chọn */
+        .package-item.active {
             border-color: var(--primary-color);
-            background: #fff5f5;
-            transform: translateY(-2px);
+            background-color: #fff0f0;
+        }
+        
+        /* Dấu tích hiển thị khi chọn */
+        .package-item.active::after {
+            content: '\f00c'; /* FontAwesome check icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
 
         .package-icon {
-            font-size: 2rem;
+            font-size: 1.8rem;
             background: white;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             flex-shrink: 0;
         }
 
-        .package-details h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-
-        .package-details .price {
-            font-size: 0.85rem;
-            color: var(--primary-color);
+        .package-details h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
+        .package-details .price-badge {
+            font-size: 0.75rem;
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 6px;
             font-weight: 600;
-            text-transform: uppercase;
-            display: block;
+            display: inline-block;
             margin-bottom: 8px;
         }
-
-        .package-details p {
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-bottom: 4px;
-        }
-
-        /* --- QR & WHY SECTION --- */
-        .why-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .package-item.active .price-badge {
+            background-color: var(--primary-color);
             color: white;
         }
-        
-        .why-section h2 {
-            color: white;
-            text-transform: uppercase;
-            font-size: 1.1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
 
-        .qr-area {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-            background: white;
+        .package-details p { font-size: 0.9rem; color: #4b5563; margin-bottom: 4px; }
+        .chu-nho { font-size: 0.8em; color: var(--text-light); font-style: italic; }
+
+        /* --- DYNAMIC IMAGE SECTION --- */
+        .display-area {
+            margin-top: 25px;
+            position: relative;
             border-radius: 12px;
-            color: #333;
-        }
-        
-        .qr-area img {
-            max-width: 150px;
-            border-radius: 8px;
-        }
-
-        /* --- FORM --- */
-        .contact-form .form-group {
-            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            /* Aspect ratio placeholder to prevent jumping */
+            min-height: 200px; 
+            background: #e5e7eb;
+            display: none; /* Ẩn mặc định, hiện khi JS chạy */
+            animation: fadeIn 0.5s ease;
         }
 
-        .contact-form input, 
-        .contact-form textarea {
+        .display-area img {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: border-color 0.2s;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            min-height: 200px;
+            max-height: 350px;
         }
 
-        .contact-form input:focus, 
-        .contact-form textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-        }
-
-        .btn-submit {
+        .overlay-note {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 12px;
-            background: #374151;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0));
+            padding: 40px 20px 20px;
             color: white;
-            border: none;
-            border-radius: 8px;
             font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-submit:hover {
-            background: #111827;
-        }
-
-        /* --- FOOTER --- */
-        footer {
+            font-size: 1.1rem;
             text-align: center;
-            font-size: 0.85rem;
-            color: #9ca3af;
-            padding: 20px 0;
-        }
-        
-        footer a {
-            color: #6b7280;
-            text-decoration: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        /* --- RESPONSIVE --- */
-        @media (max-width: 480px) {
-            .container {
-                gap: 15px;
-            }
-            .card {
-                padding: 20px 15px;
-            }
-            .profile-name {
-                font-size: 1.3rem;
-            }
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+
+        /* --- OTHER SECTIONS --- */
+        .why-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .why-section h2 { border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase;}
+        .qr-area { text-align: center; margin-top: 20px; padding: 15px; background: white; border-radius: 12px; color: #333; }
+        .btn-submit { width: 100%; padding: 12px; background: #374151; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #d1d5db; border-radius: 8px; }
+        footer { text-align: center; font-size: 0.85rem; color: #9ca3af; padding: 20px 0; }
+        footer a { color: #6b7280; text-decoration: none; }
     </style>
 </head>
 <body>
@@ -310,48 +202,55 @@
             <h1 class="profile-name">Đúng, tôi đang rất <span class="dashed-strikethrough">nghèo</span> khó khăn. 😭</h1>
             <p style="color: #6b7280; margin-bottom: 10px;">@linh.thinkk</p>
             <div class="profile-bio">
-                &ldquo;Chào các Shark, tôi đến đây để kêu gọi vốn 5 nghìn VNĐ tiền gửi xe đổi lấy 100% sự biết ơn của tôi. Định giá công ty: Vô giá (vì hiện tại chưa ai hốt).&rdquo;
+                &ldquo;Chào các Shark, tôi đến đây để kêu gọi vốn 5 nghìn VNĐ tiền gửi xe. Định giá công ty: Vô giá.&rdquo;
             </div>
         </div>
 
         <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px; font-size: 1.2rem;">
+            <h2 style="text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: #111827;">
                 <i class="fas fa-hand-holding-dollar" style="color: var(--primary-color);"></i> 
-                Các Gói Đầu Tư Tiềm Năng
+                Chọn Gói Đầu Tư
             </h2>
+            
             <div class="package-list">
-                
-                <div class="package-item">
+                <div class="package-item" id="pack-trada" onclick="updateFund('trada')">
                     <div class="package-icon">🥃</div>
                     <div class="package-details">
                         <h3>Nhà Đầu Tư Trà Đá</h3>
-                        <span class="price">Funding: 5k - 10k</span>
-                        <p><strong>Quyền lợi:</strong> Nhận lời cảm ơn thầm thì trong gió, tên bạn xuất hiện trong giấc mơ trưa.</p>
-                        <p class="chu-nho">Mô tả: Giúp CEO (là tôi) tỉnh táo để tiếp tục than nghèo.</p>
+                        <span class="price-badge">Funding: 5k</span>
+                        <p>Quyền lợi: Nhận lời cảm ơn thầm thì trong gió.</p>
+                        <p class="chu-nho">Giúp CEO tỉnh táo để tiếp tục than nghèo.</p>
                     </div>
                 </div>
 
-                <div class="package-item">
+                <div class="package-item" id="pack-banhmi" onclick="updateFund('banhmi')">
                     <div class="package-icon">🌭</div>
                     <div class="package-details">
                         <h3>Cổ Đông Bánh Mì</h3>
-                        <span class="price">Funding: 20k - 30k</span>
-                        <p><strong>Quyền lợi:</strong> Tôi sẽ chụp ảnh chiếc bánh mì trước khi ăn gửi riêng báo cáo giải ngân.</p>
-                        <p class="chu-nho">Mô tả: Cứu vớt tâm hồn đói khát, nâng cao KPI "No Bụng".</p>
+                        <span class="price-badge">Funding: 30k</span>
+                        <p>Quyền lợi: Nhận ảnh chụp bánh mì report tiến độ.</p>
+                        <p class="chu-nho">Cứu vớt tâm hồn đói khát, nâng cao KPI "No Bụng".</p>
                     </div>
                 </div>
 
-                <div class="package-item">
+                <div class="package-item" id="pack-vip" onclick="updateFund('vip')">
                     <div class="package-icon">🍱</div>
                     <div class="package-details">
                         <h3>Gói "Ăn gì cũng được"</h3>
-                        <span class="price">Funding: 50k - 100k+</span>
-                        <p><strong>Quyền lợi:</strong> Chủ tịch HĐQT bữa trưa. Có quyền biểu quyết ăn Phở Bò hay Bún Chả.</p>
-                        <p class="chu-nho">Mô tả: Đẳng cấp thượng thừa. Note lại để Founder công khai cảm ơn trên MXH.</p>
+                        <span class="price-badge">Funding: 50k+</span>
+                        <p>Quyền lợi: Chủ tịch HĐQT bữa trưa, được quyền vote món.</p>
+                        <p class="chu-nho">Note lại để Founder công khai cảm ơn trên MXH.</p>
                     </div>
                 </div>
             </div>
-            
+
+            <div class="display-area" id="dynamic-display">
+                <img id="fund-image" src="" alt="Fund Image">
+                <div class="overlay-note">
+                    <span id="fund-text"></span>
+                </div>
+            </div>
+
             <div style="text-align: center; margin-top: 20px;">
                 <a href="#" class="btn-submit" style="display: inline-block; text-decoration: none; background: #e5e7eb; color: #374151;">Tôi quá lười để làm nút thanh toán thật</a>
             </div>
@@ -359,72 +258,81 @@
 
         <div class="card why-section">
             <h2>Tại sao Chotôi.cơm?</h2>
-            <p><i class="fas fa-quote-left"></i> Tôi không xin tiền để tiêu xài hoang phí. Tôi đang huy động vốn lưu động để duy trì hoạt động của bộ máy sinh học (cụ thể là cái dạ dày). Mục tiêu quý này là chuyển đổi mô hình kinh doanh từ 'Ăn mì tôm qua ngày' sang 'Có thịt trong bát phở'.</p>
-            <p class="tm-mt" style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;">
-                Thực ra là cũng muốn có một cái web ngắn gọn tạm thời và tiện lợi để lấy ra nhét vào vài thứ cần thiết thật nhanh mà không cần đăng nhập Zalo hoặc Drive nhưng mà 🤷‍♂️ cũng tiện ăn xin luôn hehe.
-            </p>
-
+            <p>"Tôi không xin tiền để tiêu xài hoang phí. Tôi đang huy động vốn lưu động để duy trì hoạt động của bộ máy sinh học (cụ thể là cái dạ dày)."</p>
+            
             <div class="qr-area">
                 <p style="margin-bottom: 10px; font-weight: bold; color: var(--primary-color);">Quét QR để đầu tư:</p>
-                <img src="img/qrcuatoi.jpg" alt="QR Code Bank" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ChuyenTienChoToi';">
-                <div style="margin-top: 10px;">
-                    <p class="highlight">Minh Bạch Tài Chính 4.0</p>
-                    <p class="chu-nho">Input: Tiền Ting Ting -> Process: Ăn -> Output: Ảnh chụp hóa đơn.</p>
-                    <p class="chu-nho" style="color:red">Tôi xin hứa sẽ sao kê hàng tháng <span>nếu rảnh</span>.</p>
-                </div>
+                <img src="img/qrcuatoi.jpg" alt="QR Code" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DemoQR';">
+                <p class="chu-nho" style="margin-top:10px; color:red">Tôi xin hứa sẽ sao kê hàng tháng <span>nếu rảnh</span>.</p>
             </div>
         </div>
 
         <div class="card contact-form">
-            <header style="margin-bottom: 20px;">
-                <h2 style="font-size: 1.2rem; color: #4b5563; text-transform: uppercase;">
-                    Alo cho tôi 📞
-                </h2>
-            </header>
-            <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Đã bảo là đùa rồi mà vẫn bấm à? 🤣');">
-                <div class="form-group">
-                    <input type="text" name="contact_name" placeholder="Tên người cần tuyên dương trên story" required/>
-                </div>
-                <div class="form-group">
-                    <input type="email" name="contact_email" placeholder="Email của quý ông quý bà" required/>
-                </div>
-                <div class="form-group">
-                    <textarea rows="4" name="contact_message" placeholder="Yêu cầu của ông/bà (Ex: Bớt hâm, bớt than nghèo...)" required></textarea>
-                </div>
-                <div style="text-align: right;">
-                    <button type="submit" class="btn-submit">Đùa đấy đừng gửi</button>
-                </div>
+            <h2 style="font-size: 1.2rem; margin-bottom: 15px;">Alo cho tôi 📞</h2>
+            <form onsubmit="event.preventDefault(); alert('Đã bảo là đùa rồi mà vẫn bấm à? 🤣');">
+                <input type="text" placeholder="Tên người cần tuyên dương" required/>
+                <input type="email" placeholder="Email của quý ông quý bà" required/>
+                <textarea rows="3" placeholder="Lời nhắn gửi yêu thương..." required></textarea>
+                <button type="submit" class="btn-submit">Gửi (Đùa đấy)</button>
             </form>
         </div>
 
         <footer>
             <p>Copyright &copy; 2003 Phạm Nhật Tôi</p>
-            <p>Designed by <a href="https://www.facebook.com/linh.thinkk">Linh.thinkk</a> (Phiên bản cái bang 4.0)</p>
         </footer>
-
     </div>
 
     <script>
-        // Hiệu ứng nhẹ khi scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
+        // Data cấu hình cho 3 gói
+        const fundData = {
+            'trada': {
+                // Thay link ảnh trà đá thật của bạn vào chỗ https://...
+                image: 'img/donate5k',
+                text: 'Bạn đang đầu tư vào: QUỸ TRÀ ĐÁ VỈA HÈ 🧊'
+            },
+            'banhmi': {
+                // Thay link ảnh bánh mì thật vào đây
+                image: 'img/donate30k',
+                text: 'Bạn đang đầu tư vào: QUỸ CỨU ĐÓI BÁNH MÌ 🥖'
+            },
+            'vip': {
+                // Thay link ảnh bữa ăn thịnh soạn vào đây
+                image: 'img/donate50k',
+                text: 'Bạn đang đầu tư vào: QUỸ "ĂN SANG" CỦA FOUNDER 👑'
+            }
+        };
 
-            cards.forEach(card => {
-                card.style.opacity = 0;
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-                observer.observe(card);
+        function updateFund(type) {
+            // 1. Xóa class active ở tất cả các gói
+            document.querySelectorAll('.package-item').forEach(item => {
+                item.classList.remove('active');
             });
-        });
+
+            // 2. Thêm class active cho gói được chọn
+            const selectedItem = document.getElementById('pack-' + type);
+            if(selectedItem) selectedItem.classList.add('active');
+
+            // 3. Hiển thị khu vực ảnh (nếu đang ẩn)
+            const displayArea = document.getElementById('dynamic-display');
+            displayArea.style.display = 'block';
+
+            // 4. Cập nhật ảnh và text với hiệu ứng fade nhẹ
+            const imgEl = document.getElementById('fund-image');
+            const textEl = document.getElementById('fund-text');
+            
+            // Reset animation để chạy lại
+            displayArea.style.animation = 'none';
+            displayArea.offsetHeight; /* trigger reflow */
+            displayArea.style.animation = 'fadeIn 0.5s ease';
+
+            if(fundData[type]) {
+                imgEl.src = fundData[type].image;
+                textEl.innerText = fundData[type].text;
+            }
+        }
+
+        // Tự động chọn gói đầu tiên khi tải trang (nếu muốn)
+        // document.addEventListener('DOMContentLoaded', () => updateFund('trada'));
     </script>
 </body>
 </html>
