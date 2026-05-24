@@ -1,341 +1,314 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cho tôi xin cơm</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <title>Cho Thanh Xuân của tôi</title>
+
     <style>
-        /* --- GLOBAL & VARIABLES --- */
-        :root {
-            --primary-color: #ff6b6b;
-            --primary-hover: #ff5252;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-color: #374151;
-            --text-light: #6b7280;
-            --border-radius: 16px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        html,body{
+            margin:0;
+            width:100%;
+            height:100%;
+            overflow:hidden;
+            background:#000;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-            color: var(--text-color);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 20px 10px;
+        canvas{
+            position:absolute;
+            inset:0;
+            width:100%;
+            height:100%;
         }
-
-        .container {
-            width: 100%;
-            max-width: 680px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease;
-        }
-
-        /* --- PROFILE --- */
-        .profile-header { text-align: center; }
-        .avatar-container {
-            position: relative; width: 120px; height: 120px; margin: 0 auto 15px;
-        }
-        .avatar {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        .status-badge {
-            position: absolute; bottom: 5px; right: 5px; background: #10b981;
-            border: 3px solid white; width: 20px; height: 20px; border-radius: 50%;
-        }
-        .profile-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; color: #111827; }
-        .dashed-strikethrough { text-decoration: line-through solid var(--primary-color) 2px; }
-        .profile-bio {
-            font-size: 0.95rem; color: var(--text-light); font-style: italic;
-            background: #fff0f0; padding: 10px 15px; border-radius: 12px;
-            display: inline-block; margin-top: 10px;
-        }
-
-        /* --- PACKAGE ITEMS --- */
-        .package-list { display: flex; flex-direction: column; gap: 15px; }
-        
-        .package-item {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb; /* Viền mặc định */
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .package-item:hover { transform: translateY(-2px); background: #fffbfb; }
-
-        /* Class được thêm vào khi chọn */
-        .package-item.active {
-            border-color: var(--primary-color);
-            background-color: #fff0f0;
-        }
-        
-        /* Dấu tích hiển thị khi chọn */
-        .package-item.active::after {
-            content: '\f00c'; /* FontAwesome check icon */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
-
-        .package-icon {
-            font-size: 1.8rem;
-            background: white;
-            width: 50px; height: 50px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex-shrink: 0;
-        }
-
-        .package-details h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
-        .package-details .price-badge {
-            font-size: 0.75rem;
-            background-color: #e5e7eb;
-            color: #374151;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-        .package-item.active .price-badge {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .package-details p { font-size: 0.9rem; color: #4b5563; margin-bottom: 4px; }
-        .chu-nho { font-size: 0.8em; color: var(--text-light); font-style: italic; }
-
-        /* --- DYNAMIC IMAGE SECTION --- */
-        .display-area {
-            margin-top: 25px;
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            /* Aspect ratio placeholder to prevent jumping */
-            min-height: 200px; 
-            background: #e5e7eb;
-            display: none; /* Ẩn mặc định, hiện khi JS chạy */
-            animation: fadeIn 0.5s ease;
-        }
-
-        .display-area img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-            min-height: 200px;
-            max-height: 350px;
-        }
-
-        .overlay-note {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0));
-            padding: 40px 20px 20px;
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- OTHER SECTIONS --- */
-        .why-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .why-section h2 { border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.1rem; text-transform: uppercase;}
-        .qr-area { text-align: center; margin-top: 20px; padding: 15px; background: white; border-radius: 12px; color: #333; }
-        .btn-submit { width: 100%; padding: 12px; background: #374151; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #d1d5db; border-radius: 8px; }
-        footer { text-align: center; font-size: 0.85rem; color: #9ca3af; padding: 20px 0; }
-        footer a { color: #6b7280; text-decoration: none; }
     </style>
 </head>
+
 <body>
 
-    <div class="container">
-        
-        <div class="card profile-header">
-            <div class="avatar-container">
-                <img src="img/unnamed.jpg" alt="Avatar" class="avatar">
-                <div class="status-badge"></div>
-            </div>
-            <h1 class="profile-name">Đúng, tôi đang rất <span class="dashed-strikethrough">nghèo</span> khó khăn. 😭</h1>
-            <p style="color: #6b7280; margin-bottom: 10px;">@linh.thinkk</p>
-            <div class="profile-bio">
-                &ldquo;Chào các Shark, tôi đến đây để kêu gọi vốn 5 nghìn VNĐ tiền gửi xe. Định giá công ty: Vô giá.&rdquo;
-            </div>
-        </div>
+<canvas id="heart"></canvas>
 
-        <div class="card">
-            <h2 style="text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: #111827;">
-                <i class="fas fa-hand-holding-dollar" style="color: var(--primary-color);"></i> 
-                Chọn Gói Đầu Tư
-            </h2>
-            
-            <div class="package-list">
-                <div class="package-item" id="pack-trada" onclick="updateFund('trada')">
-                    <div class="package-icon">🥃</div>
-                    <div class="package-details">
-                        <h3>Nhà Đầu Tư Trà Đá</h3>
-                        <span class="price-badge">Funding: 5k</span>
-                        <p>Quyền lợi: Nhận lời cảm ơn thầm thì trong gió.</p>
-                        <p class="chu-nho">Giúp CEO tỉnh táo để tiếp tục than nghèo.</p>
-                    </div>
-                </div>
+<script>
 
-                <div class="package-item" id="pack-banhmi" onclick="updateFund('banhmi')">
-                    <div class="package-icon">🌭</div>
-                    <div class="package-details">
-                        <h3>Cổ Đông Bánh Mì</h3>
-                        <span class="price-badge">Funding: 30k</span>
-                        <p>Quyền lợi: Nhận ảnh chụp bánh mì report tiến độ.</p>
-                        <p class="chu-nho">Cứu vớt tâm hồn đói khát, nâng cao KPI "No Bụng".</p>
-                    </div>
-                </div>
+window.requestAnimationFrame =
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    function(callback){
+        return setTimeout(callback,16);
+    };
 
-                <div class="package-item" id="pack-vip" onclick="updateFund('vip')">
-                    <div class="package-icon">🍱</div>
-                    <div class="package-details">
-                        <h3>Gói "Ăn gì cũng được"</h3>
-                        <span class="price-badge">Funding: 50k+</span>
-                        <p>Quyền lợi: Chủ tịch HĐQT bữa trưa, được quyền vote món.</p>
-                        <p class="chu-nho">Note lại để Founder công khai cảm ơn trên MXH.</p>
-                    </div>
-                </div>
-            </div>
+const canvas = document.getElementById("heart");
+const ctx = canvas.getContext("2d");
 
-            <div class="display-area" id="dynamic-display">
-                <img id="fund-image" src="" alt="Fund Image">
-                <div class="overlay-note">
-                    <span id="fund-text"></span>
-                </div>
-            </div>
+let width, height;
 
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="#" class="btn-submit" style="display: inline-block; text-decoration: none; background: #e5e7eb; color: #374151;">Tôi quá lười để làm nút thanh toán thật</a>
-            </div>
-        </div>
+function resize(){
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+}
+resize();
 
-        <div class="card why-section">
-            <h2>Tại sao Chotôi.cơm?</h2>
-            <p>"Tôi không xin tiền để tiêu xài hoang phí. Tôi đang huy động vốn lưu động để duy trì hoạt động của bộ máy sinh học (cụ thể là cái dạ dày)."</p>
-            
-            <div class="qr-area">
-                <p style="margin-bottom: 10px; font-weight: bold; color: var(--primary-color);">Quét QR để đầu tư:</p>
-                <img src="img/qrcuatoi.jpg" alt="QR Code" width="150" height="150">
-                <p class="chu-nho" style="margin-top:10px; color:red">Tôi xin hứa sẽ sao kê hàng tháng <span>nếu rảnh</span>.</p>
-            </div>
-        </div>
+window.addEventListener("resize", resize);
 
-        <div class="card contact-form">
-            <h2 style="font-size: 1.2rem; margin-bottom: 15px;">Alo cho tôi 📞</h2>
-            <form onsubmit="event.preventDefault(); alert('Đã bảo là đùa rồi mà vẫn bấm à? 🤣');">
-                <input type="text" placeholder="Tên người cần tuyên dương" required/>
-                <input type="email" placeholder="Email của quý ông quý bà" required/>
-                <textarea rows="3" placeholder="Lời nhắn gửi yêu thương..." required></textarea>
-                <button type="submit" class="btn-submit">Gửi (Đùa đấy)</button>
-            </form>
-        </div>
+const mobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
 
-        <footer>
-            <p>Copyright &copy; 2003 Phạm Nhật Tôi</p>
-        </footer>
-    </div>
+const rand = Math.random;
 
-    <script>
-        // Data cấu hình cho 3 gói
-        const fundData = {
-            'trada': {
-                // Thay link ảnh trà đá thật của bạn vào chỗ https://...
-                image: 'img/donate5k.jpg',
-                text: 'Bạn đang đầu tư vào: QUỸ TRÀ ĐÁ VỈA HÈ 🧊'
-            },
-            'banhmi': {
-                // Thay link ảnh bánh mì thật vào đây
-                image: 'img/donate30k.jpg',
-                text: 'Bạn đang đầu tư vào: QUỸ CỨU ĐÓI BÁNH MÌ 🥖'
-            },
-            'vip': {
-                // Thay link ảnh bữa ăn thịnh soạn vào đây
-                image: 'img/donate50k.jpg',
-                text: 'Bạn đang đầu tư vào: QUỸ "ĂN SANG" CỦA FOUNDER 👑'
-            }
+function heartPosition(rad){
+    return [
+        Math.pow(Math.sin(rad), 3),
+        -(
+            15 * Math.cos(rad)
+            - 5 * Math.cos(2 * rad)
+            - 2 * Math.cos(3 * rad)
+            - Math.cos(4 * rad)
+        )
+    ];
+}
+
+function scaleAndTranslate(pos, sx, sy, dx, dy){
+    return [
+        dx + pos[0] * sx,
+        dy + pos[1] * sy
+    ];
+}
+
+const traceCount = mobile ? 25 : 50;
+
+const pointsOrigin = [];
+
+let dr = mobile ? 0.3 : 0.1;
+
+for(let i=0;i<Math.PI*2;i+=dr){
+    pointsOrigin.push(
+        scaleAndTranslate(
+            heartPosition(i),
+            210,
+            13,
+            0,
+            0
+        )
+    );
+}
+
+for(let i=0;i<Math.PI*2;i+=dr){
+    pointsOrigin.push(
+        scaleAndTranslate(
+            heartPosition(i),
+            150,
+            9,
+            0,
+            0
+        )
+    );
+}
+
+for(let i=0;i<Math.PI*2;i+=dr){
+    pointsOrigin.push(
+        scaleAndTranslate(
+            heartPosition(i),
+            90,
+            5,
+            0,
+            0
+        )
+    );
+}
+
+const heartPointsCount = pointsOrigin.length;
+
+const targetPoints = [];
+
+function pulse(scale){
+
+    for(let i=0;i<pointsOrigin.length;i++){
+
+        targetPoints[i] = [];
+
+        targetPoints[i][0] =
+            pointsOrigin[i][0] * scale + width/2;
+
+        targetPoints[i][1] =
+            pointsOrigin[i][1] * scale + height/2;
+    }
+}
+
+const particles = [];
+
+for(let i=0;i<heartPointsCount;i++){
+
+    const x = rand() * width;
+    const y = rand() * height;
+
+    particles[i] = {
+
+        vx:0,
+        vy:0,
+
+        R:2,
+
+        speed: rand() * 0.8 + 4.2,
+
+        q: ~~(rand() * heartPointsCount),
+
+        D: 2 * (i % 2) - 1,
+
+        force: 0.92,
+
+        f:
+            "hsla(" +
+            (rand()*10) +
+            "," +
+            ~~(40*rand()+60) +
+            "%," +
+            ~~(60*rand()+20) +
+            "%,.35)",
+
+        trace:[]
+    };
+
+    for(let k=0;k<traceCount;k++){
+
+        particles[i].trace[k] = {
+            x:x,
+            y:y
         };
+    }
+}
 
-        function updateFund(type) {
-            // 1. Xóa class active ở tất cả các gói
-            document.querySelectorAll('.package-item').forEach(item => {
-                item.classList.remove('active');
-            });
+const config = {
+    traceK:0.35
+};
 
-            // 2. Thêm class active cho gói được chọn
-            const selectedItem = document.getElementById('pack-' + type);
-            if(selectedItem) selectedItem.classList.add('active');
+let lastBeat = 0;
+let beatProgress = 0;
 
-            // 3. Hiển thị khu vực ảnh (nếu đang ẩn)
-            const displayArea = document.getElementById('dynamic-display');
-            displayArea.style.display = 'block';
+// ECG-LIKE HEARTBEAT
+function realisticHeartbeat(t){
 
-            // 4. Cập nhật ảnh và text với hiệu ứng fade nhẹ
-            const imgEl = document.getElementById('fund-image');
-            const textEl = document.getElementById('fund-text');
-            
-            // Reset animation để chạy lại
-            displayArea.style.animation = 'none';
-            displayArea.offsetHeight; /* trigger reflow */
-            displayArea.style.animation = 'fadeIn 0.5s ease';
+    // ~75 BPM
+    const bpm = 75;
 
-            if(fundData[type]) {
-                imgEl.src = fundData[type].image;
-                textEl.innerText = fundData[type].text;
+    const beatDuration = 60 / bpm;
+
+    const phase = (t % beatDuration) / beatDuration;
+
+    let scale = 1;
+
+    // MAIN HEART CONTRACTION
+    if(phase < 0.12){
+
+        scale += Math.sin(phase / 0.12 * Math.PI) * 0.18;
+    }
+
+    // SECONDARY SMALLER CONTRACTION
+    else if(phase > 0.18 && phase < 0.28){
+
+        scale += Math.sin((phase - 0.18)/0.10 * Math.PI) * 0.07;
+    }
+
+    return scale;
+}
+
+let start = performance.now();
+
+function loop(now){
+
+    requestAnimationFrame(loop);
+
+    const t = (now - start) / 1000;
+
+    // realistic pulse
+    const scale = realisticHeartbeat(t);
+
+    pulse(scale);
+
+    // background fade
+    ctx.fillStyle = "rgba(0,0,0,0.12)";
+    ctx.fillRect(0,0,width,height);
+
+    // soft glow
+    const glow = ctx.createRadialGradient(
+        width/2,
+        height/2,
+        50,
+        width/2,
+        height/2,
+        320
+    );
+
+    glow.addColorStop(0,"rgba(255,0,70,0.08)");
+    glow.addColorStop(1,"rgba(255,0,0,0)");
+
+    ctx.fillStyle = glow;
+    ctx.fillRect(0,0,width,height);
+
+    for(let i=particles.length;i--;){
+
+        const u = particles[i];
+
+        const q = targetPoints[u.q];
+
+        const dx = u.trace[0].x - q[0];
+        const dy = u.trace[0].y - q[1];
+
+        const length = Math.sqrt(dx*dx + dy*dy);
+
+        if(length < 10){
+
+            if(rand() > 0.95){
+
+                u.q = ~~(rand()*heartPointsCount);
+
+            }else{
+
+                if(rand() > 0.99){
+                    u.D *= -1;
+                }
+
+                u.q += u.D;
+
+                u.q %= heartPointsCount;
+
+                if(u.q < 0){
+                    u.q += heartPointsCount;
+                }
             }
         }
 
-        // Tự động chọn gói đầu tiên khi tải trang (nếu muốn)
-        // document.addEventListener('DOMContentLoaded', () => updateFund('trada'));
-    </script>
+        u.vx += -dx / length * u.speed;
+        u.vy += -dy / length * u.speed;
+
+        u.trace[0].x += u.vx;
+        u.trace[0].y += u.vy;
+
+        u.vx *= u.force;
+        u.vy *= u.force;
+
+        for(let k=0;k<u.trace.length-1;){
+
+            const T = u.trace[k];
+            const N = u.trace[++k];
+
+            N.x -= config.traceK * (N.x - T.x);
+            N.y -= config.traceK * (N.y - T.y);
+        }
+
+        ctx.fillStyle = u.f;
+
+        for(let k=0;k<u.trace.length;k++){
+
+            ctx.fillRect(
+                u.trace[k].x,
+                u.trace[k].y,
+                1.5,
+                1.5
+            );
+        }
+    }
+}
+
+requestAnimationFrame(loop);
+
+</script>
+
 </body>
 </html>
-
-
-
