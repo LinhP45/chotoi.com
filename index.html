@@ -1,24 +1,35 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="vi">
 <head>
-    <title>Cho Thanh Xuân của tôi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <style>
-        html,body{
-            margin:0;
-            width:100%;
-            height:100%;
-            overflow:hidden;
-            background:#000;
-        }
+<title>Dành cho Thanh Xuân của tôi</title>
 
-        canvas{
-            position:absolute;
-            inset:0;
-            width:100%;
-            height:100%;
-        }
-    </style>
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+
+    html,
+    body{
+        width:100%;
+        height:100%;
+        overflow:hidden;
+        background:#000;
+        touch-action:none;
+    }
+
+    canvas{
+        position:fixed;
+        inset:0;
+        width:100%;
+        height:100%;
+        display:block;
+    }
+</style>
 </head>
 
 <body>
@@ -27,34 +38,49 @@
 
 <script>
 
-window.requestAnimationFrame =
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    function(callback){
-        return setTimeout(callback,16);
-    };
-
 const canvas = document.getElementById("heart");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", {
+    alpha: true,
+    desynchronized: true
+});
 
-let width, height;
+// ===== MOBILE DETECT =====
+const mobile =
+    /android|iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    window.innerWidth < 768;
+
+// ===== HIGH DPI SUPPORT =====
+let width, height, ratio;
 
 function resize(){
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+
+    ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+    width = window.innerWidth;
+    height = window.innerHeight;
+
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+
+    createHeart();
 }
-resize();
 
 window.addEventListener("resize", resize);
 
-const mobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
-
+// ===== RANDOM =====
 const rand = Math.random;
 
+// ===== HEART MATH =====
 function heartPosition(rad){
+
     return [
         Math.pow(Math.sin(rad), 3),
+
         -(
             15 * Math.cos(rad)
             - 5 * Math.cos(2 * rad)
@@ -65,127 +91,146 @@ function heartPosition(rad){
 }
 
 function scaleAndTranslate(pos, sx, sy, dx, dy){
+
     return [
         dx + pos[0] * sx,
         dy + pos[1] * sy
     ];
 }
 
-const traceCount = mobile ? 25 : 50;
+// ===== HEART SETTINGS =====
+let traceCount;
+let dr;
+let heartScale;
 
 const pointsOrigin = [];
-
-let dr = mobile ? 0.3 : 0.1;
-
-for(let i=0;i<Math.PI*2;i+=dr){
-    pointsOrigin.push(
-        scaleAndTranslate(
-            heartPosition(i),
-            210,
-            13,
-            0,
-            0
-        )
-    );
-}
-
-for(let i=0;i<Math.PI*2;i+=dr){
-    pointsOrigin.push(
-        scaleAndTranslate(
-            heartPosition(i),
-            150,
-            9,
-            0,
-            0
-        )
-    );
-}
-
-for(let i=0;i<Math.PI*2;i+=dr){
-    pointsOrigin.push(
-        scaleAndTranslate(
-            heartPosition(i),
-            90,
-            5,
-            0,
-            0
-        )
-    );
-}
-
-const heartPointsCount = pointsOrigin.length;
-
 const targetPoints = [];
+const particles = [];
+
+function createHeart(){
+
+    pointsOrigin.length = 0;
+    particles.length = 0;
+
+    // MOBILE OPTIMIZATION
+    traceCount = mobile ? 35 : 55;
+
+    dr = mobile ? 0.18 : 0.10;
+
+    // RESPONSIVE HEART SIZE
+    const base = Math.min(width, height);
+
+    heartScale = mobile
+        ? base * 0.23
+        : base * 0.26;
+
+    // OUTER HEART
+    for(let i = 0; i < Math.PI * 2; i += dr){
+
+        pointsOrigin.push(
+            scaleAndTranslate(
+                heartPosition(i),
+                heartScale,
+                heartScale * 0.06,
+                0,
+                0
+            )
+        );
+    }
+
+    // MIDDLE
+    for(let i = 0; i < Math.PI * 2; i += dr){
+
+        pointsOrigin.push(
+            scaleAndTranslate(
+                heartPosition(i),
+                heartScale * 0.72,
+                heartScale * 0.045,
+                0,
+                0
+            )
+        );
+    }
+
+    // INNER
+    for(let i = 0; i < Math.PI * 2; i += dr){
+
+        pointsOrigin.push(
+            scaleAndTranslate(
+                heartPosition(i),
+                heartScale * 0.42,
+                heartScale * 0.025,
+                0,
+                0
+            )
+        );
+    }
+
+    createParticles();
+}
 
 function pulse(scale){
 
     for(let i=0;i<pointsOrigin.length;i++){
 
-        targetPoints[i] = [];
+        targetPoints[i] = [
 
-        targetPoints[i][0] =
-            pointsOrigin[i][0] * scale + width/2;
+            pointsOrigin[i][0] * scale + width / 2,
 
-        targetPoints[i][1] =
-            pointsOrigin[i][1] * scale + height/2;
+            pointsOrigin[i][1] * scale + height / 2
+        ];
     }
 }
 
-const particles = [];
+// ===== PARTICLES =====
+function createParticles(){
 
-for(let i=0;i<heartPointsCount;i++){
+    const count = pointsOrigin.length;
 
-    const x = rand() * width;
-    const y = rand() * height;
+    for(let i=0;i<count;i++){
 
-    particles[i] = {
+        const x = rand() * width;
+        const y = rand() * height;
 
-        vx:0,
-        vy:0,
+        const hue = 340 + rand() * 20;
 
-        R:2,
+        particles[i] = {
 
-        speed: rand() * 0.8 + 4.2,
+            vx:0,
+            vy:0,
 
-        q: ~~(rand() * heartPointsCount),
+            speed: mobile
+                ? rand() * 0.5 + 2.8
+                : rand() * 0.8 + 4.2,
 
-        D: 2 * (i % 2) - 1,
+            q: ~~(rand() * count),
 
-        force: 0.92,
+            D: 2 * (i % 2) - 1,
 
-        f:
-            "hsla(" +
-            (rand()*10) +
-            "," +
-            ~~(40*rand()+60) +
-            "%," +
-            ~~(60*rand()+20) +
-            "%,.35)",
+            force: mobile ? 0.94 : 0.92,
 
-        trace:[]
-    };
+            color:
+                "hsla(" +
+                hue +
+                ",100%,65%,0.55)",
 
-    for(let k=0;k<traceCount;k++){
-
-        particles[i].trace[k] = {
-            x:x,
-            y:y
+            trace:[]
         };
+
+        for(let k=0;k<traceCount;k++){
+
+            particles[i].trace[k] = {
+                x:x,
+                y:y
+            };
+        }
     }
 }
 
-const config = {
-    traceK:0.35
-};
-
-let lastBeat = 0;
-let beatProgress = 0;
-
-// ECG-LIKE HEARTBEAT
+// ===== HEARTBEAT =====
 function realisticHeartbeat(t){
 
-    // ~75 BPM
-    const bpm = 75;
+    const bpm = mobile ? 72 : 75;
 
     const beatDuration = 60 / bpm;
 
@@ -193,20 +238,31 @@ function realisticHeartbeat(t){
 
     let scale = 1;
 
-    // MAIN HEART CONTRACTION
+    // MAIN BEAT
     if(phase < 0.12){
 
-        scale += Math.sin(phase / 0.12 * Math.PI) * 0.18;
+        scale +=
+            Math.sin(
+                phase / 0.12 * Math.PI
+            ) * 0.20;
     }
 
-    // SECONDARY SMALLER CONTRACTION
+    // SECONDARY BEAT
     else if(phase > 0.18 && phase < 0.28){
 
-        scale += Math.sin((phase - 0.18)/0.10 * Math.PI) * 0.07;
+        scale +=
+            Math.sin(
+                (phase - 0.18) / 0.10 * Math.PI
+            ) * 0.08;
     }
 
     return scale;
 }
+
+// ===== ANIMATION =====
+const config = {
+    traceK: mobile ? 0.22 : 0.35
+};
 
 let start = performance.now();
 
@@ -216,32 +272,35 @@ function loop(now){
 
     const t = (now - start) / 1000;
 
-    // realistic pulse
     const scale = realisticHeartbeat(t);
 
     pulse(scale);
 
-    // background fade
-    ctx.fillStyle = "rgba(0,0,0,0.12)";
+    // SMOOTHER MOBILE TRAIL
+    ctx.fillStyle = mobile
+        ? "rgba(0,0,0,0.16)"
+        : "rgba(0,0,0,0.12)";
+
     ctx.fillRect(0,0,width,height);
 
-    // soft glow
+    // GLOW
     const glow = ctx.createRadialGradient(
         width/2,
         height/2,
-        50,
+        20,
         width/2,
         height/2,
-        320
+        mobile ? 220 : 320
     );
 
-    glow.addColorStop(0,"rgba(255,0,70,0.08)");
+    glow.addColorStop(0,"rgba(255,0,80,0.18)");
     glow.addColorStop(1,"rgba(255,0,0,0)");
 
     ctx.fillStyle = glow;
     ctx.fillRect(0,0,width,height);
 
-    for(let i=particles.length;i--;){
+    // DRAW PARTICLES
+    for(let i = particles.length; i--;){
 
         const u = particles[i];
 
@@ -250,26 +309,26 @@ function loop(now){
         const dx = u.trace[0].x - q[0];
         const dy = u.trace[0].y - q[1];
 
-        const length = Math.sqrt(dx*dx + dy*dy);
+        const length = Math.sqrt(dx*dx + dy*dy) || 0.001;
 
         if(length < 10){
 
-            if(rand() > 0.95){
+            if(rand() > 0.96){
 
-                u.q = ~~(rand()*heartPointsCount);
+                u.q = ~~(rand() * targetPoints.length);
 
             }else{
 
-                if(rand() > 0.99){
+                if(rand() > 0.995){
                     u.D *= -1;
                 }
 
                 u.q += u.D;
 
-                u.q %= heartPointsCount;
+                u.q %= targetPoints.length;
 
                 if(u.q < 0){
-                    u.q += heartPointsCount;
+                    u.q += targetPoints.length;
                 }
             }
         }
@@ -292,21 +351,32 @@ function loop(now){
             N.y -= config.traceK * (N.y - T.y);
         }
 
-        ctx.fillStyle = u.f;
+        ctx.fillStyle = u.color;
+
+        const size = mobile ? 2 : 1.5;
 
         for(let k=0;k<u.trace.length;k++){
 
             ctx.fillRect(
                 u.trace[k].x,
                 u.trace[k].y,
-                1.5,
-                1.5
+                size,
+                size
             );
         }
     }
 }
 
+// ===== START =====
+resize();
 requestAnimationFrame(loop);
+
+// ===== PREVENT MOBILE SCROLL =====
+document.addEventListener(
+    "touchmove",
+    e => e.preventDefault(),
+    { passive:false }
+);
 
 </script>
 
