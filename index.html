@@ -1,12 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 
 <meta
 name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
-/>
+content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes">
 
 <title>Dành cho Thanh Xuân của tôi</title>
 
@@ -44,9 +43,7 @@ canvas{
 
 <script>
 
-// ======================================================
-// CANVAS
-// ======================================================
+// ===== CANVAS =====
 
 const canvas =
     document.getElementById("heart");
@@ -57,11 +54,10 @@ const ctx =
         desynchronized:true
     });
 
-// ======================================================
-// DEVICE
-// ======================================================
+// ===== MOBILE =====
 
 const mobile =
+
     /android|iphone|ipad|ipod/i
     .test(navigator.userAgent)
 
@@ -69,13 +65,16 @@ const mobile =
 
     window.innerWidth < 768;
 
-// ======================================================
-// GLOBAL
-// ======================================================
+// ===== GLOBAL =====
 
 let width;
 let height;
 let ratio;
+let viewScale = 1;
+
+let traceCount;
+let dr;
+let heartScale;
 
 const rand = Math.random;
 
@@ -83,23 +82,30 @@ const pointsOrigin = [];
 const targetPoints = [];
 const particles = [];
 
-let traceCount;
-let dr;
-
-let outerScaleX;
-let outerScaleY;
-
-let middleScaleX;
-let middleScaleY;
-
-let innerScaleX;
-let innerScaleY;
-
-// ======================================================
-// RESIZE
-// ======================================================
+// ===== RESIZE =====
 
 function resize(){
+
+    const visual =
+        window.visualViewport;
+
+    let rawScale = visual
+        ? visual.scale
+        : 1;
+
+    // ===== FIX 200% MOBILE ZOOM =====
+
+    if(
+        rawScale > 1.7 &&
+        rawScale < 2.3
+    ){
+
+        viewScale = 2;
+
+    }else{
+
+        viewScale = rawScale;
+    }
 
     ratio = Math.min(
         window.devicePixelRatio || 1,
@@ -138,9 +144,20 @@ window.addEventListener(
     resize
 );
 
-// ======================================================
-// HEART FORMULA
-// ======================================================
+if(window.visualViewport){
+
+    visualViewport.addEventListener(
+        "resize",
+        resize
+    );
+
+    visualViewport.addEventListener(
+        "scroll",
+        resize
+    );
+}
+
+// ===== HEART FORMULA =====
 
 function heartPosition(rad){
 
@@ -176,9 +193,7 @@ function scaleAndTranslate(
     ];
 }
 
-// ======================================================
-// CREATE HEART
-// ======================================================
+// ===== CREATE HEART =====
 
 function createHeart(){
 
@@ -186,44 +201,43 @@ function createHeart(){
     particles.length = 0;
 
     traceCount = mobile
-        ? 40
-        : 60;
+        ? 35
+        : 55;
 
     dr = mobile
-        ? 0.16
+        ? 0.18
         : 0.10;
 
-    // ==================================================
-    // IMPORTANT FIX:
-    // KHÔNG dùng viewport scale
-    // KHÔNG dùng zoom compensation
-    // Dùng fixed spacing tuyệt đối
-    // => zoom bao nhiêu cũng không dính layer
-    // ==================================================
+    // ===== FIX ZOOM COMPRESSION =====
+    // giữ spacing giữa các layer tim
 
-    const base =
-        Math.min(width,height);
+    const fixedBase = Math.min(
+        window.screen.width,
+        window.screen.height
+    );
 
-    const heartSize = mobile
-        ? base * 0.24
-        : base * 0.27;
+    const base = mobile
+        ? fixedBase * 0.95
+        : Math.min(width,height);
 
-    // ==================================================
-    // FIXED LAYER SPACING
-    // ==================================================
+    // ===== HEART SIZE =====
 
-    outerScaleX = heartSize;
-    outerScaleY = heartSize * 0.060;
+    heartScale = mobile
+        ? base * 0.23
+        : base * 0.26;
 
-    middleScaleX = outerScaleX - 75;
-    middleScaleY = outerScaleY - 4.5;
+    // ===== FIXED SPACING =====
 
-    innerScaleX = middleScaleX - 70;
-    innerScaleY = middleScaleY - 4;
+    const outerX = heartScale;
+    const outerY = heartScale * 0.060;
 
-    // ==================================================
-    // OUTER HEART
-    // ==================================================
+    const middleX = outerX - 60;
+    const middleY = outerY - 3.5;
+
+    const innerX = middleX - 55;
+    const innerY = middleY - 2.8;
+
+    // ===== OUTER =====
 
     for(
         let i = 0;
@@ -237,8 +251,8 @@ function createHeart(){
 
                 heartPosition(i),
 
-                outerScaleX,
-                outerScaleY,
+                outerX,
+                outerY,
 
                 0,
                 0
@@ -246,9 +260,7 @@ function createHeart(){
         );
     }
 
-    // ==================================================
-    // MIDDLE HEART
-    // ==================================================
+    // ===== MIDDLE =====
 
     for(
         let i = 0;
@@ -262,8 +274,8 @@ function createHeart(){
 
                 heartPosition(i),
 
-                middleScaleX,
-                middleScaleY,
+                middleX,
+                middleY,
 
                 0,
                 0
@@ -271,9 +283,7 @@ function createHeart(){
         );
     }
 
-    // ==================================================
-    // INNER HEART
-    // ==================================================
+    // ===== INNER =====
 
     for(
         let i = 0;
@@ -287,8 +297,8 @@ function createHeart(){
 
                 heartPosition(i),
 
-                innerScaleX,
-                innerScaleY,
+                innerX,
+                innerY,
 
                 0,
                 0
@@ -299,9 +309,7 @@ function createHeart(){
     createParticles();
 }
 
-// ======================================================
-// PULSE
-// ======================================================
+// ===== PULSE =====
 
 function pulse(scale){
 
@@ -330,9 +338,7 @@ function pulse(scale){
     }
 }
 
-// ======================================================
-// PARTICLES
-// ======================================================
+// ===== PARTICLES =====
 
 function createParticles(){
 
@@ -347,6 +353,9 @@ function createParticles(){
         const y =
             rand() * height;
 
+        const hue =
+            340 + rand() * 20;
+
         particles[i] = {
 
             vx:0,
@@ -356,7 +365,7 @@ function createParticles(){
 
                 mobile
 
-                ? rand() * 0.4 + 2.6
+                ? rand() * 0.5 + 2.8
 
                 : rand() * 0.8 + 4.2,
 
@@ -373,17 +382,13 @@ function createParticles(){
                 ? 0.94
                 : 0.92,
 
-            // ==================================================
-            // RED HEART
-            // ==================================================
-
             color:
 
                 "hsla(" +
 
-                (rand()*6) +
+                hue +
 
-                ",100%,58%,0.75)",
+                ",100%,65%,0.55)",
 
             trace:[]
         };
@@ -403,9 +408,7 @@ function createParticles(){
     }
 }
 
-// ======================================================
-// STRONG HEARTBEAT
-// ======================================================
+// ===== STRONGER HEARTBEAT =====
 
 function realisticHeartbeat(t){
 
@@ -424,9 +427,7 @@ function realisticHeartbeat(t){
 
     let scale = 1;
 
-    // ==================================================
-    // MAIN BEAT
-    // ==================================================
+    // ===== MAIN BEAT =====
 
     if(phase < 0.12){
 
@@ -441,9 +442,7 @@ function realisticHeartbeat(t){
             ) * 0.28;
     }
 
-    // ==================================================
-    // SECOND BEAT
-    // ==================================================
+    // ===== SECONDARY BEAT =====
 
     else if(
         phase > 0.18 &&
@@ -463,9 +462,7 @@ function realisticHeartbeat(t){
             ) * 0.13;
     }
 
-    // ==================================================
-    // MICRO VIBRATION
-    // ==================================================
+    // ===== MICRO VIBRATION =====
 
     scale +=
         Math.sin(t * 8) * 0.008;
@@ -473,9 +470,7 @@ function realisticHeartbeat(t){
     return scale;
 }
 
-// ======================================================
-// CONFIG
-// ======================================================
+// ===== CONFIG =====
 
 const config = {
 
@@ -486,9 +481,7 @@ const config = {
         : 0.35
 };
 
-// ======================================================
-// LOOP
-// ======================================================
+// ===== LOOP =====
 
 let start =
     performance.now();
@@ -506,9 +499,7 @@ function loop(now){
 
     pulse(scale);
 
-    // ==================================================
-    // BACKGROUND FADE
-    // ==================================================
+    // ===== BG FADE =====
 
     ctx.fillStyle =
 
@@ -525,9 +516,7 @@ function loop(now){
         height
     );
 
-    // ==================================================
-    // RED GLOW
-    // ==================================================
+    // ===== GLOW =====
 
     const glow =
 
@@ -541,13 +530,13 @@ function loop(now){
             height / 2,
 
             mobile
-                ? 260
-                : 360
+                ? 220
+                : 320
         );
 
     glow.addColorStop(
         0,
-        "rgba(255,0,0,0.22)"
+        "rgba(255,0,80,0.20)"
     );
 
     glow.addColorStop(
@@ -564,9 +553,7 @@ function loop(now){
         height
     );
 
-    // ==================================================
-    // PARTICLES
-    // ==================================================
+    // ===== PARTICLES =====
 
     for(
         let i = particles.length;
@@ -668,8 +655,8 @@ function loop(now){
         const size =
 
             mobile
-            ? 2.2
-            : 1.6;
+            ? 2
+            : 1.5;
 
         for(
             let k=0;
@@ -689,17 +676,13 @@ function loop(now){
     }
 }
 
-// ======================================================
-// START
-// ======================================================
+// ===== START =====
 
 resize();
 
 requestAnimationFrame(loop);
 
-// ======================================================
-// PREVENT MOBILE SCROLL
-// ======================================================
+// ===== PREVENT MOBILE SCROLL =====
 
 document.addEventListener(
 
