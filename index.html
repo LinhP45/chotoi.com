@@ -208,34 +208,22 @@ function createHeart(){
         ? 0.18
         : 0.10;
 
-    // ===== FIX ZOOM COMPRESSION =====
-    // giữ spacing giữa các layer tim
+    // ===== KEEP HEART SIZE STABLE =====
 
-    const fixedBase = Math.min(
-        window.screen.width,
-        window.screen.height
-    );
+    const zoomCompensation =
 
-    const base = mobile
-        ? fixedBase * 0.95
-        : Math.min(width,height);
+        viewScale >= 2
+            ? 1
+            : 1 / viewScale;
 
-    // ===== HEART SIZE =====
+    const base =
+
+        Math.min(width,height) *
+        zoomCompensation;
 
     heartScale = mobile
         ? base * 0.23
         : base * 0.26;
-
-    // ===== FIXED SPACING =====
-
-    const outerX = heartScale;
-    const outerY = heartScale * 0.060;
-
-    const middleX = outerX - 60;
-    const middleY = outerY - 3.5;
-
-    const innerX = middleX - 55;
-    const innerY = middleY - 2.8;
 
     // ===== OUTER =====
 
@@ -251,8 +239,9 @@ function createHeart(){
 
                 heartPosition(i),
 
-                outerX,
-                outerY,
+                heartScale,
+
+                heartScale * 0.06,
 
                 0,
                 0
@@ -274,8 +263,9 @@ function createHeart(){
 
                 heartPosition(i),
 
-                middleX,
-                middleY,
+                heartScale * 0.72,
+
+                heartScale * 0.045,
 
                 0,
                 0
@@ -297,8 +287,9 @@ function createHeart(){
 
                 heartPosition(i),
 
-                innerX,
-                innerY,
+                heartScale * 0.42,
+
+                heartScale * 0.025,
 
                 0,
                 0
@@ -428,6 +419,7 @@ function realisticHeartbeat(t){
     let scale = 1;
 
     // ===== MAIN BEAT =====
+    // stronger contraction
 
     if(phase < 0.12){
 
