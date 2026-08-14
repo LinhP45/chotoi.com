@@ -1,693 +1,534 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1.0,maximum-scale=5.0,user-scalable=yes">
-
-<title>Dành cho Thanh Xuân của tôi</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    touch-action:none;
-}
-
-canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    display:block;
-}
-
-</style>
-</head>
-
-<body>
-
-<canvas id="heart"></canvas>
-
-<script>
-
-// ===== CANVAS =====
-
-const canvas =
-    document.getElementById("heart");
-
-const ctx =
-    canvas.getContext("2d",{
-        alpha:true,
-        desynchronized:true
-    });
-
-// ===== MOBILE =====
-
-const mobile =
-
-    /android|iphone|ipad|ipod/i
-    .test(navigator.userAgent)
-
-    ||
-
-    window.innerWidth < 768;
-
-// ===== GLOBAL =====
-
-let width;
-let height;
-let ratio;
-let viewScale = 1;
-
-let traceCount;
-let dr;
-let heartScale;
-
-const rand = Math.random;
-
-const pointsOrigin = [];
-const targetPoints = [];
-const particles = [];
-
-// ===== RESIZE =====
-
-function resize(){
-
-    const visual =
-        window.visualViewport;
-
-    let rawScale = visual
-        ? visual.scale
-        : 1;
-
-    // ===== FIX 200% MOBILE ZOOM =====
-
-    if(
-        rawScale > 1.7 &&
-        rawScale < 2.3
-    ){
-
-        viewScale = 2;
-
-    }else{
-
-        viewScale = rawScale;
-    }
-
-    ratio = Math.min(
-        window.devicePixelRatio || 1,
-        2
-    );
-
-    width = window.innerWidth;
-    height = window.innerHeight;
-
-    canvas.width =
-        width * ratio;
-
-    canvas.height =
-        height * ratio;
-
-    canvas.style.width =
-        width + "px";
-
-    canvas.style.height =
-        height + "px";
-
-    ctx.setTransform(
-        ratio,
-        0,
-        0,
-        ratio,
-        0,
-        0
-    );
-
-    createHeart();
-}
-
-window.addEventListener(
-    "resize",
-    resize
-);
-
-if(window.visualViewport){
-
-    visualViewport.addEventListener(
-        "resize",
-        resize
-    );
-
-    visualViewport.addEventListener(
-        "scroll",
-        resize
-    );
-}
-
-// ===== HEART FORMULA =====
-
-function heartPosition(rad){
-
-    return [
-
-        Math.pow(
-            Math.sin(rad),
-            3
-        ),
-
-        -(
-            15 * Math.cos(rad)
-            - 5 * Math.cos(2 * rad)
-            - 2 * Math.cos(3 * rad)
-            - Math.cos(4 * rad)
-        )
-    ];
-}
-
-function scaleAndTranslate(
-    pos,
-    sx,
-    sy,
-    dx,
-    dy
-){
-
-    return [
-
-        dx + pos[0] * sx,
-
-        dy + pos[1] * sy
-    ];
-}
-
-// ===== CREATE HEART =====
-
-function createHeart(){
-
-    pointsOrigin.length = 0;
-    particles.length = 0;
-
-    traceCount = mobile
-        ? 35
-        : 55;
-
-    dr = mobile
-        ? 0.18
-        : 0.10;
-
-    // ===== KEEP HEART SIZE STABLE =====
-
-    const zoomCompensation =
-
-        viewScale >= 2
-            ? 1
-            : 1 / viewScale;
-
-    const base =
-
-        Math.min(width,height) *
-        zoomCompensation;
-
-    heartScale = mobile
-        ? base * 0.23
-        : base * 0.26;
-
-    // ===== OUTER =====
-
-    for(
-        let i = 0;
-        i < Math.PI * 2;
-        i += dr
-    ){
-
-        pointsOrigin.push(
-
-            scaleAndTranslate(
-
-                heartPosition(i),
-
-                heartScale,
-
-                heartScale * 0.06,
-
-                0,
-                0
-            )
-        );
-    }
-
-    // ===== MIDDLE =====
-
-    for(
-        let i = 0;
-        i < Math.PI * 2;
-        i += dr
-    ){
-
-        pointsOrigin.push(
-
-            scaleAndTranslate(
-
-                heartPosition(i),
-
-                heartScale * 0.72,
-
-                heartScale * 0.045,
-
-                0,
-                0
-            )
-        );
-    }
-
-    // ===== INNER =====
-
-    for(
-        let i = 0;
-        i < Math.PI * 2;
-        i += dr
-    ){
-
-        pointsOrigin.push(
-
-            scaleAndTranslate(
-
-                heartPosition(i),
-
-                heartScale * 0.42,
-
-                heartScale * 0.025,
-
-                0,
-                0
-            )
-        );
-    }
-
-    createParticles();
-}
-
-// ===== PULSE =====
-
-function pulse(scale){
-
-    const centerX =
-        width / 2;
-
-    const centerY =
-        height / 2;
-
-    for(
-        let i = 0;
-        i < pointsOrigin.length;
-        i++
-    ){
-
-        targetPoints[i] = [
-
-            pointsOrigin[i][0] *
-            scale +
-            centerX,
-
-            pointsOrigin[i][1] *
-            scale +
-            centerY
-        ];
-    }
-}
-
-// ===== PARTICLES =====
-
-function createParticles(){
-
-    const count =
-        pointsOrigin.length;
-
-    for(let i=0;i<count;i++){
-
-        const x =
-            rand() * width;
-
-        const y =
-            rand() * height;
-
-        const hue =
-            340 + rand() * 20;
-
-        particles[i] = {
-
-            vx:0,
-            vy:0,
-
-            speed:
-
-                mobile
-
-                ? rand() * 0.5 + 2.8
-
-                : rand() * 0.8 + 4.2,
-
-            q:~~(
-                rand() * count
-            ),
-
-            D:
-                2 * (i % 2) - 1,
-
-            force:
-
-                mobile
-                ? 0.94
-                : 0.92,
-
-            color:
-
-                "hsla(" +
-
-                hue +
-
-                ",100%,65%,0.55)",
-
-            trace:[]
-        };
-
-        for(
-            let k=0;
-            k<traceCount;
-            k++
-        ){
-
-            particles[i].trace[k] = {
-
-                x:x,
-                y:y
-            };
-        }
-    }
-}
-
-// ===== STRONGER HEARTBEAT =====
-
-function realisticHeartbeat(t){
-
-    const bpm =
-        mobile
-        ? 72
-        : 75;
-
-    const beatDuration =
-        60 / bpm;
-
-    const phase =
-
-        (t % beatDuration) /
-        beatDuration;
-
-    let scale = 1;
-
-    // ===== MAIN BEAT =====
-    // stronger contraction
-
-    if(phase < 0.12){
-
-        scale +=
-
-            Math.sin(
-
-                phase /
-                0.12 *
-                Math.PI
-
-            ) * 0.28;
-    }
-
-    // ===== SECONDARY BEAT =====
-
-    else if(
-        phase > 0.18 &&
-        phase < 0.30
-    ){
-
-        scale +=
-
-            Math.sin(
-
-                (
-                    phase - 0.18
-                ) /
-                0.12 *
-                Math.PI
-
-            ) * 0.13;
-    }
-
-    // ===== MICRO VIBRATION =====
-
-    scale +=
-        Math.sin(t * 8) * 0.008;
-
-    return scale;
-}
-
-// ===== CONFIG =====
-
-const config = {
-
-    traceK:
-
-        mobile
-        ? 0.22
-        : 0.35
-};
-
-// ===== LOOP =====
-
-let start =
-    performance.now();
-
-function loop(now){
-
-    requestAnimationFrame(loop);
-
-    const t =
-
-        (now - start) / 1000;
-
-    const scale =
-        realisticHeartbeat(t);
-
-    pulse(scale);
-
-    // ===== BG FADE =====
-
-    ctx.fillStyle =
-
-        mobile
-
-        ? "rgba(0,0,0,0.16)"
-
-        : "rgba(0,0,0,0.12)";
-
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-    // ===== GLOW =====
-
-    const glow =
-
-        ctx.createRadialGradient(
-
-            width / 2,
-            height / 2,
-            20,
-
-            width / 2,
-            height / 2,
-
-            mobile
-                ? 220
-                : 320
-        );
-
-    glow.addColorStop(
-        0,
-        "rgba(255,0,80,0.20)"
-    );
-
-    glow.addColorStop(
-        1,
-        "rgba(255,0,0,0)"
-    );
-
-    ctx.fillStyle = glow;
-
-    ctx.fillRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-    // ===== PARTICLES =====
-
-    for(
-        let i = particles.length;
-        i--;
-    ){
-
-        const u =
-            particles[i];
-
-        const q =
-            targetPoints[u.q];
-
-        const dx =
-
-            u.trace[0].x - q[0];
-
-        const dy =
-
-            u.trace[0].y - q[1];
-
-        const length =
-
-            Math.sqrt(
-                dx*dx +
-                dy*dy
-            ) || 0.001;
-
-        if(length < 10){
-
-            if(rand() > 0.96){
-
-                u.q = ~~(
-
-                    rand() *
-                    targetPoints.length
-                );
-
-            }else{
-
-                if(rand() > 0.995){
-
-                    u.D *= -1;
-                }
-
-                u.q += u.D;
-
-                u.q %=
-                    targetPoints.length;
-
-                if(u.q < 0){
-
-                    u.q +=
-                    targetPoints.length;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hẻm Quán - Seafood & Vietnamese Traditional Cuisine | Since 2013</title>
+    <!-- Font Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            teal: '#006885',
+                            tealHover: '#005C76',
+                            tealLight: '#CCE1E7',
+                            tealMist: '#F2F7F9',
+                            gold: '#DBA410',
+                            goldLight: '#FCF5C5',
+                            crimson: '#A62C2A',
+                            charcoal: '#1A2328',
+                            amber: '#E39213',
+                            accent: '#D4AF37'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
                 }
             }
         }
+    </script>
+    <style>
+        body {
+            /* Đổi nền thành màu be và chữ màu đen */
+            background-color: #F5F5DC; 
+            color: #111827; 
+            overflow-x: hidden;
+        }
+        /* Refined Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F5DC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #006885;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #DBA410;
+        }
+        /* Elegant golden spotlight glow */
+        .spotlight {
+            background: radial-gradient(circle 600px at 50% -100px, rgba(0, 104, 133, 0.15), transparent);
+        }
+        .spotlight-amber {
+            background: radial-gradient(circle 400px at 100% 80%, rgba(219, 164, 16, 0.08), transparent);
+        }
+        /* Wave line animation for active categories */
+        .active-dot {
+            position: relative;
+        }
+        .active-dot::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 3px;
+            background-color: #DBA410;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+        }
+        /* Glassmorphism Refraction (Sửa lại viền và shadow cho nền sáng) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        .hero-panel {
+            /* Làm sáng hộp chứa thông tin */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(0, 104, 133, 0.05) 100%);
+            border: 1px solid rgba(0, 104, 133, 0.2);
+        }
+        /* Animation effects */
+        .slide-up {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Custom layout line between menu item name and price (Đổi gạch nối sang đen nhạt) */
+        .menu-dots {
+            flex-grow: 1;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+            margin: 0 12px;
+            position: relative;
+            top: -4px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased spotlight min-h-[100dvh] flex flex-col justify-between">
 
-        u.vx +=
+    <!-- Ambient Spotlights -->
+    <div class="fixed inset-0 z-0 pointer-events-none spotlight"></div>
+    <div class="fixed inset-0 z-0 pointer-events-none spotlight-amber"></div>
 
-            -dx / length *
-            u.speed;
+    <!-- MAIN WRAPPER -->
+    <main class="relative z-10 flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-12 flex flex-col justify-center">
+        
+        <!-- COVER / LANDING PAGE -->
+        <section id="cover-page" class="w-full max-w-3xl mx-auto text-center py-8 md:py-16">
+            <!-- Brand Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-teal bg-brand-teal/10 text-brand-teal font-semibold tracking-wider uppercase mb-6 slide-up" style="animation-delay: 100ms;">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12,3C12,3 10,7 10,9C10,10.1 10.9,11 12,11C13.1,11 14,10.1 14,9C14,7 12,3 12,3M12,13C8,13 4.5,15.5 3.1,19C2.7,20 3.5,21 4.5,21H19.5C20.5,21 21.3,20 20.9,19C19.5,15.5 16,13 12,13Z"/>
+                </svg>
+                Established 2013
+            </div>
 
-        u.vy +=
+            <!-- Restaurant Name & Tagline -->
+            <h1 class="text-6xl md:text-8xl font-bold tracking-tight text-black font-serif mb-2 slide-up" style="animation-delay: 200ms;">
+                Hẻm Quán
+            </h1>
+            <p class="text-brand-gold text-sm md:text-lg font-medium uppercase tracking-widest max-w-2xl mx-auto px-4 mb-4 slide-up" style="animation-delay: 300ms;">
+                Seafood & Vietnamese Traditional Cuisine
+            </p>
+            
+            <div class="w-16 h-[2px] bg-brand-gold mx-auto mb-10 slide-up" style="animation-delay: 400ms;"></div>
 
-            -dy / length *
-            u.speed;
+            <!-- Address and Info Box -->
+            <div class="hero-panel rounded-2xl p-6 md:p-8 max-w-xl mx-auto mb-12 shadow-xl slide-up" style="animation-delay: 500ms;">
+                <div class="flex items-center justify-center gap-2 text-brand-teal text-sm mb-4 font-medium">
+                    <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span>Premium Authentic Taste Experience</span>
+                </div>
+                
+                <h3 class="text-black text-base font-semibold uppercase tracking-wider mb-4">Select Language / Chọn Ngôn Ngữ</h3>
+                
+                <!-- Language Selector Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="selectLanguage('vi')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                        <span class="text-2xl">🇻🇳</span>
+                        <div class="flex-grow">
+                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">Tiếng Việt</p>
+                            <p class="text-xs text-gray-500">Menu Tiếng Việt</p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
 
-        u.trace[0].x += u.vx;
-        u.trace[0].y += u.vy;
+                    <button onclick="selectLanguage('en')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                        <span class="text-2xl">🇬🇧</span>
+                        <div class="flex-grow">
+                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">English</p>
+                            <p class="text-xs text-gray-500">English Menu</p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
 
-        u.vx *= u.force;
-        u.vy *= u.force;
+                    <button onclick="selectLanguage('ko')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                        <span class="text-2xl">🇰🇷</span>
+                        <div class="flex-grow">
+                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">한국어</p>
+                            <p class="text-xs text-gray-500">한국어 메뉴</p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
 
-        for(
-            let k=0;
-            k<u.trace.length-1;
-        ){
+                    <button onclick="selectLanguage('zh')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                        <span class="text-2xl">🇨🇳</span>
+                        <div class="flex-grow">
+                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">中文</p>
+                            <p class="text-xs text-gray-500">中文菜单</p>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
 
-            const T =
-                u.trace[k];
+                    <button onclick="selectLanguage('ru')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left sm:col-span-2 shadow-sm">
+                        <span class="text-2xl">🇷🇺</span>
+                        <div class="flex-grow flex items-center justify-between pr-4">
+                            <div>
+                                <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">Русский</p>
+                                <p class="text-xs text-gray-500">Русское меню</p>
+                            </div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-            const N =
-                u.trace[++k];
+        <!-- MENU VIEWER (HIDDEN BY DEFAULT) -->
+        <section id="menu-viewer" class="hidden w-full fade-in">
+            <!-- Header Controls / Sticky bar -->
+            <div class="sticky top-0 z-40 bg-[#F5F5DC]/95 backdrop-blur-md py-4 border-b border-black/10 flex flex-wrap items-center justify-between gap-4 mb-8">
+                <button onclick="returnToCover()" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-brand-gold transition-colors font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span id="back-text">Quay lại / Back</span>
+                </button>
 
-            N.x -=
+                <div class="flex items-center gap-3">
+                    <!-- Quick Lang Switcher -->
+                    <select id="lang-switcher" onchange="switchLanguage(this.value)" class="bg-white text-black border border-black/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-brand-gold font-medium shadow-sm">
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="ko">🇰🇷 한국어</option>
+                        <option value="zh">🇨🇳 中文</option>
+                        <option value="ru">🇷🇺 Русский</option>
+                    </select>
+                </div>
+            </div>
 
-                config.traceK *
-                (N.x - T.x);
+            <!-- Tax Alert Banner -->
+            <div class="glass-panel rounded-xl p-4 mb-8 text-center text-xs md:text-sm text-brand-gold tracking-wide uppercase font-semibold shadow-sm">
+                ⚠️ <span id="tax-warning-text">Giá chưa bao gồm thuế GTGT / Price not included VAT / Unit: VND</span>
+            </div>
 
-            N.y -=
+            <!-- Sticky Category Slider Nav -->
+            <div class="sticky top-[73px] z-30 bg-[#F5F5DC]/95 backdrop-blur-sm border-b border-black/5 py-3 mb-8 -mx-4 px-4 overflow-x-auto whitespace-nowrap scrollbar-none flex gap-2 shadow-sm" id="category-nav-slider">
+                <!-- Dynamically populated -->
+            </div>
 
-                config.traceK *
-                (N.y - T.y);
+            <!-- Dynamic Menu Grid Layout -->
+            <div id="menu-categories-container" class="space-y-16">
+                <!-- Dynamically populated categories -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 w-full bg-[#E8E8CD] border-t border-black/10 py-8 md:py-12 mt-12 text-gray-600 text-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                <!-- VNA Brand Reference -->
+                <div class="space-y-4">
+                    <h4 class="text-black font-serif font-semibold text-lg tracking-wide uppercase">Hẻm Quán</h4>
+                    <p class="text-xs text-gray-500 max-w-sm leading-relaxed">
+                        Established in 2013, Hẻm Quán brings the absolute premium essence of Saigon street food and luxury coastal seafood right to your plate.
+                    </p>
+                    <div class="text-xs text-brand-gold font-semibold uppercase tracking-wider">
+                        ★ Premium Seafood & Vietnamese Cuisine
+                    </div>
+                </div>
+
+                <!-- Locations -->
+                <div class="space-y-3">
+                    <h5 class="text-black font-semibold text-xs tracking-wider uppercase text-brand-teal">Hà Nội Locations</h5>
+                    <ul class="space-y-2 text-xs text-gray-600 font-medium">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-gold">•</span>
+                            <span>96 Chùa Hà, Cầu Giấy</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-gold">•</span>
+                            <span>149-161 Hoàng Cầu, Đống Đa</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-gold">•</span>
+                            <span>92 Vũ Phạm Hàm, Cầu Giấy</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contact & Đà Nẵng -->
+                <div class="space-y-3">
+                    <h5 class="text-black font-semibold text-xs tracking-wider uppercase text-brand-teal">Đà Nẵng & Contact</h5>
+                    <ul class="space-y-2 text-xs text-gray-600 font-medium">
+                        <li class="flex items-start gap-2">
+                            <span class="text-brand-gold">•</span>
+                            <span>298 Nguyễn Công Trứ, An Hải</span>
+                        </li>
+                    </ul>
+                    <div class="pt-2">
+                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Hotline</p>
+                        <p class="text-black font-bold text-base text-brand-gold">037 695 3563</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Website</p>
+                        <a href="https://hemquan.vn" target="_blank" class="text-brand-teal hover:text-brand-gold transition-colors text-sm font-semibold">hemquan.vn</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-black/10 pt-6 text-center text-xs text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-4 font-medium">
+                <p>&copy; 2013-2025 Hẻm Quán. All rights reserved.</p>
+                <p class="text-gray-500">Designed with absolute premium Vietnamese hospitality standards.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- EMBEDDED DATA & CONTROLLER JS -->
+    <script>
+        const menuData = [{"names": {"vi": "MÓN ĂN SÁNG", "en": "Breakfast", "ko": "아침 식사 메뉴", "zh": "早餐菜单", "ru": "Завтраки"}, "items": [{"names": {"vi": "Phở bò", "en": "Beef Pho", "ko": "소고기 쌀국수", "zh": "牛肉河粉", "ru": "Фо-бо"}, "price": "45.000"}, {"names": {"vi": "Bún bò Nam Bộ", "en": "Vietnamese Southern-Style Beef Vermicelli", "ko": "베트남 남부식 소고기 쌀국수", "zh": "越南南部牛肉米线", "ru": "Вьетнамская рисовая лапша с говядиной по-южному"}, "price": "40.000"}, {"names": {"vi": "Xôi", "en": "Sticky Rice", "ko": "찹쌀밥", "zh": "糯米饭", "ru": "Клейкий рис"}, "price": "40.000"}, {"names": {"vi": "Bánh cuốn Thanh Trì", "en": "Thanh Tri Steamed Rice Rolls", "ko": "탄찌 쌀롤", "zh": "青池蒸米卷", "ru": "Бань куон Тхань Чи"}, "price": "85.000"}, {"names": {"vi": "Bánh mì", "en": "Vietnamese Banh Mi", "ko": "베트남 반미", "zh": "越南法棍三明治", "ru": "Bánh mì вьетнамский"}, "price": "35.000"}, {"names": {"vi": "Bánh mì sizzling", "en": "Vietnamese Sizzling Pan Banh Mi", "ko": "베트남식 철판 Banh Mi", "zh": "越南铁板 Banh Mi", "ru": "Вьетнамский Banh Mi на горячей сковороде"}, "price": "105.000"}, {"names": {"vi": "Bún chả Hà Nội", "en": "Hanoi Grilled Pork with Vermicelli", "ko": "하노이 분짜", "zh": "河内烤肉米线", "ru": "Бун ча Ханоя"}, "price": "50.000"}, {"names": {"vi": "Bún đậu mắm tôm", "en": "Rice Vermicelli with Fried Tofu", "ko": "두부와 쌀국수", "zh": "豆腐米线", "ru": "Бун дау с креветочной пастой"}, "price": "65.000"}, {"names": {"vi": "Cơm tấm Sài Gòn", "en": "Saigon Broken Rice", "ko": "사이공 껌땀", "zh": "西贡碎米饭", "ru": "Ком там Сайгона"}, "price": "85.000"}]}, {"names": {"vi": "SALAD", "en": "Salad", "ko": "샐러드", "zh": "沙拉", "ru": "Салаты"}, "items": [{"names": {"vi": "Salad rong biển trứng cua", "en": "Seaweed salad with crab roe", "ko": "해초 게알 샐러드", "zh": "海藻蟹籽沙拉", "ru": "Салат из водорослей с икрой краба"}, "price": "135.000"}, {"names": {"vi": "Gỏi sứa", "en": "Jellyfish salad", "ko": "해파리 샐러드", "zh": "海蜇沙拉", "ru": "Салат с медузой"}, "price": "90.000"}, {"names": {"vi": "Gỏi bò rau càng cua", "en": "Beef & wild watercress salad", "ko": "소고기 깡꾸아 샐러드", "zh": "假蒌叶牛肉沙拉", "ru": "Салат с говядиной и зеленью"}, "price": "120.000"}, {"names": {"vi": "Salad rau xanh bò Kobe", "en": "Kobe Beef Green Salad", "ko": "고베 소고기 그린 샐러드", "zh": "神户牛肉田园沙拉", "ru": "Салат с говядиной Кобе"}, "price": "275.000"}, {"names": {"vi": "Salad rau xanh", "en": "Garden green salad", "ko": "그린 샐러드", "zh": "时蔬沙拉", "ru": "Салат из зелени"}, "price": "85.000"}, {"names": {"vi": "Salad lườn ngỗng", "en": "Smoked goose breast salad", "ko": "훈제 거위 가슴살 샐러드", "zh": "烟熏鹅胸沙拉", "ru": "Салат с филе гуся"}, "price": "120.000"}, {"names": {"vi": "Salad cá hồi hoa quả", "en": "Salmon Fruit Salad", "ko": "연어 과일 샐러드", "zh": "三文鱼水果沙拉", "ru": "Салат с фруктами и лососем"}, "price": "265.000"}]}, {"names": {"vi": "KHAI VỊ", "en": "Appetizers", "ko": "애피타이저", "zh": "开胃菜", "ru": "Закуски"}, "items": [{"names": {"vi": "Đậu hũ hải sản khói lửa", "en": "Seafood Tofu", "ko": "해물 두부", "zh": "海鲜豆腐", "ru": "Тофу с морепродуктами"}, "price": "185.000"}, {"names": {"vi": "Đậu hũ sốt trứng muối", "en": "Tofu with salted egg sauce", "ko": "짠 계란노른자 소스 두부", "zh": "咸蛋黄酱豆腐", "ru": "Тофу с соусом из солёного яйца"}, "price": "95.000"}, {"names": {"vi": "Đậu hũ chà bông trứng bắc thảo", "en": "Silken tofu with pork floss and century egg", "ko": "피단 두부", "zh": "皮蛋豆腐", "ru": "Тофу с мясной стружкой и столетним яйцом"}, "price": "155.000"}, {"names": {"vi": "Khoai tây chiên", "en": "French fries", "ko": "감자튀김", "zh": "薯条", "ru": "Картофель фри"}, "price": "50.000"}, {"names": {"vi": "Ba chỉ then len", "en": "Then Len pork belly", "ko": "텐렌 잎을 곁들인 삼겹살", "zh": "五花肉配Then Len香叶", "ru": "Свинина Тхэн Лен"}, "price": "145.000"}, {"names": {"vi": "Ba chỉ ngâm mắm", "en": "Pork belly in fish sauce", "ko": "느억맘에 절인 삼겹살", "zh": "鱼露腌五花肉", "ru": "Свинина в рыбном соусе"}, "price": "145.000"}, {"names": {"vi": "Bò một nắng muối kiến", "en": "Sun-dried grilled beef with ant salt", "ko": "개미소금 소고기 육포", "zh": "蚂蚁盐牛肉干", "ru": "Вяленая говядина с муравьиной солью"}, "price": "145.000"}, {"names": {"vi": "Bắp bò Tứ Xuyên", "en": "Sichuan Beef Shank", "ko": "사천식 소고기 사태", "zh": "四川牛腱", "ru": "Говядина по-сычуаньски"}, "price": "125.000"}, {"names": {"vi": "Chả mực Hạ Long", "en": "Ha Long Style Squid Cakes", "ko": "하롱식 오징어 완자", "zh": "下龙风味墨鱼饼", "ru": "Кальмарные котлеты Халонга"}, "price": "205.000"}, {"names": {"vi": "Chả mỡ", "en": "Vietnamese pork patty", "ko": "베트남식 돼지고기 완자튀김", "zh": "越式炸肉饼", "ru": "Свиной паштет на гриле"}, "price": "165.000"}, {"names": {"vi": "Chả cốm Hà Nội", "en": "Hanoi young green rice pork patties", "ko": "하노이식 풋쌀 돼지고기 완자", "zh": "河内绿米猪肉饼", "ru": "Ча ком Ханоя"}, "price": "115.000"}, {"names": {"vi": "Chả cá Thăng Long", "en": "Thang Long Grilled Fish", "ko": "탕롱 생선구이", "zh": "升龙烤鱼", "ru": "Ча ка Тханг Лонг"}, "price": "230.000"}]}, {"names": {"vi": "MÓN NEM", "en": "Vietnamese Spring Rolls", "ko": "베트남식 스프링롤", "zh": "越南春卷", "ru": "Немы"}, "items": [{"names": {"vi": "Nem rán Hà Nội (4 cái)", "en": "Ha Noi fried spring rolls (4 pcs)", "ko": "하노이식 튀김 스프링롤 (4개)", "zh": "河内炸春卷 (4个)", "ru": "Ханойские жареные немы (4 шт.)"}, "price": "75.000"}, {"names": {"vi": "Nem rau (5 cái)", "en": "Vegetable spring rolls (5 pcs)", "ko": "채소 스프링롤 (5개)", "zh": "蔬菜春卷 (5个)", "ru": "Овощные немы (5 шт.)"}, "price": "75.000"}, {"names": {"vi": "Chả ram tôm đất", "en": "Crispy shrimp rice paper rolls", "ko": "새우 짜조", "zh": "越式炸虾春卷", "ru": "Хрустящие рулетики с креветками"}, "price": "95.000"}, {"names": {"vi": "Vằn thắn tôm thịt chiên (5 cái)", "en": "Crispy Fried Shrimp & Pork Wontons (5 pcs)", "ko": "새우·돼지고기 튀김 완탕 (5개)", "zh": "香炸鲜虾猪肉馄饨(5个)", "ru": "Жареные вонтоны с креветками и свининой (5 шт.)"}, "price": "95.000"}, {"names": {"vi": "Set nem rán", "en": "Fried spring roll set", "ko": "튀김 롤 세트", "zh": "炸春卷套餐", "ru": "Сет жареных немов"}, "price": "195.000"}, {"names": {"vi": "Set nem rán + trà", "en": "Fried spring roll set + tropical fruit tea", "ko": "튀김 롤 세트 + 열대 과일차", "zh": "炸春卷套餐 + 水果茶", "ru": "Сет немов + чай"}, "price": "285.000"}, {"names": {"vi": "Vằn thắn tôm thịt nước (5 cái)", "en": "Shrimp & Pork Wonton Soup (5 pcs)", "ko": "새우·돼지고기 완탕국 (5개)", "zh": "鲜虾猪肉馄饨汤(5个)", "ru": "Вонтоны в бульоне (5 шт.)"}, "price": "95.000"}]}, {"names": {"vi": "MÓN CUỐN", "en": "Vietnamese Fresh Rolls", "ko": "베트남식 생롤", "zh": "越南鲜卷", "ru": "Вьетнамские рулетики"}, "items": [{"names": {"vi": "Phở cuốn bò (4 cái)", "en": "Beef pho rolls (4 pcs)", "ko": "하노이 소고기 쌀국수롤 (4개)", "zh": "河内牛肉河粉卷 (4个)", "ru": "Рисовые рулетики с говядиной (4 шт.)"}, "price": "88.000"}, {"names": {"vi": "Cuốn tôm thịt (4 cái)", "en": "Fresh shrimp & pork spring rolls (4 pcs)", "ko": "새우·돼지고기 월남쌈 (4개)", "zh": "鲜虾猪肉卷(4个)", "ru": "Рулетики с креветками и свининой (4 шт.)"}, "price": "99.000"}, {"names": {"vi": "Nem chua và bì cuốn đu đủ (4 cái)", "en": "Fermented pork & pork skin rolls with papaya (4 pcs)", "ko": "발효 돼지고기·돼지껍질 파파야 말이 (4개)", "zh": "发酵猪肉配猪皮和青木瓜(4个)", "ru": "Рулетики с немом (4 шт.)"}, "price": "72.000"}, {"names": {"vi": "Set cuốn", "en": "Vietnamese roll set", "ko": "베트남 롤 세트", "zh": "越式卷拼盘套餐", "ru": "Сет рулетиков"}, "price": "185.000"}, {"names": {"vi": "Set cuốn + trà", "en": "Roll set + tropical fruit tea", "ko": "롤 세트 + 열대 과일차", "zh": "卷拼盘 + 水果茶", "ru": "Сет рулетиков + чай"}, "price": "275.000"}, {"names": {"vi": "Bò cuốn mỡ chài", "en": "Grilled beef wrapped in caul fat", "ko": "지방막 소고기말이", "zh": "网油牛肉卷", "ru": "Говядина в сетке из свиного жира"}, "price": "165.000"}]}, {"names": {"vi": "BÁNH MIỀN TRUNG", "en": "Traditional Central Vietnamese Cakes", "ko": "베트남 중부 전통 떡", "zh": "越南中部传统糕点", "ru": "Блюда из Центрального Вьетнама"}, "items": [{"names": {"vi": "Set bánh (2 Nậm, 2 Lọc, 2 Ram ít)", "en": "Vietnamese traditional cake set", "ko": "베트남 전통 떡 세트", "zh": "越南传统糕点套餐", "ru": "Сет вьетнамских пирожков"}, "price": "85.000"}, {"names": {"vi": "Bánh xèo miền Trung (3 cái)", "en": "Central Vietnamese crispy pancake (3 pcs)", "ko": "중부식 반쎄오 (3개)", "zh": "越南中部煎饼(3个)", "ru": "Бань сео (3 шт.)"}, "price": "85.000"}, {"names": {"vi": "Bánh khọt (6 cái)", "en": "Mini savory pancakes (6 pcs)", "ko": "반콧 (6개)", "zh": "迷你煎饼盏 (6个)", "ru": "Бань кот (6 шт.)"}, "price": "85.000"}, {"names": {"vi": "Bánh nậm (5 cái)", "en": "Vietnamese Steamed Flat Rice Cake (5 pcs)", "ko": "베트남 반남 (5개)", "zh": "越南南饼(5个)", "ru": "Бань нам (5 шт.)"}, "price": "65.000"}, {"names": {"vi": "Bánh bột lọc (5 cái)", "en": "Vietnamese Tapioca Dumplings (5 pcs)", "ko": "베트남 반봇록 (5개)", "zh": "越南木薯粉水晶饺(5个)", "ru": "Бань бот лок (5 шт.)"}, "price": "65.000"}, {"names": {"vi": "Bánh ram ít (5 cái)", "en": "Vietnamese Crispy Rice Dumplings (5 pcs)", "ko": "베트남 반람잇 (5개)", "zh": "越南炸糯米饼(5个)", "ru": "Бань рам ит (5 шт.)"}, "price": "65.000"}]}, {"names": {"vi": "MÓN CHIM CÂU VÀ GÀ HẦM", "en": "Pigeon & Stewed Chicken", "ko": "비둘기 & 닭찜", "zh": "乳鸽 & 炖鸡", "ru": "Голуби и тушёная курица"}, "items": [{"names": {"vi": "Chim câu quay da giòn", "en": "Crispy Roasted Squab", "ko": "바삭한 비둘기 구이", "zh": "脆皮乳鸽", "ru": "Жареный голубь с хрустящей кожей"}, "price": "165.000/con"}, {"names": {"vi": "Chim câu xào cà", "en": "Stir-fried Squab with Pickled Eggplant", "ko": "가지절임을 곁들인 비둘기 볶음", "zh": "乳鸽炒腌茄子", "ru": "Голубь с баклажанами"}, "price": "185.000"}, {"names": {"vi": "Chim câu nhồi cốm hạt sen", "en": "Squab Stuffed with Green Rice & Lotus Seeds", "ko": "연꽃씨와 풋찹쌀을 채운 비둘기", "zh": "莲子青稞酿乳鸽", "ru": "Голубь, фаршированный зелёным рисом и лотосом"}, "price": "265.000"}, {"names": {"vi": "Gà hầm bí đỏ (1/2 con)", "en": "Stewed Chicken with Pumpkin", "ko": "단호박을 넣어 푹 끓인 닭고기", "zh": "南瓜炖鸡", "ru": "Курица, тушёная с тыквой"}, "price": "285.000"}]}, {"names": {"vi": "MÓN GÀ", "en": "Chicken", "ko": "닭고기", "zh": "鸡肉", "ru": "Блюда из курицы"}, "items": [{"names": {"vi": "Đùi gà chiên xù", "en": "Crispy Fried Chicken Drumsticks", "ko": "바삭한 닭다리 튀김", "zh": "香酥炸鸡腿", "ru": "Куриные ножки в хрустящей панировке"}, "price": "150.000"}, {"names": {"vi": "Gà cuộn lá dứa", "en": "Chicken wrapped in pandan leaves", "ko": "판단잎으로 감싼 닭튀김", "zh": "香兰叶鸡卷", "ru": "Курица с листьями пандана"}, "price": "145.000"}, {"names": {"vi": "Gà chiên mắm", "en": "Fried Chicken with Fish Sauce", "ko": "피시소스 치킨 튀김", "zh": "鱼露炸鸡", "ru": "Курица в рыбном соусе"}, "price": "145.000"}, {"names": {"vi": "Gà nướng sả cây", "en": "Lemongrass grilled chicken", "ko": "레몬그라스 치킨구이", "zh": "香茅烤鸡", "ru": "Курица на гриле с лемонграссом"}, "price": "150.000"}, {"names": {"vi": "Gà xào lá quế hạt điều", "en": "Stir-fried chicken with basil & cashews", "ko": "바질 캐슈넛 치킨볶음", "zh": "罗勒腰果炒鸡", "ru": "Курица с basil и cashews"}, "price": "155.000"}]}, {"names": {"vi": "MÓN BÒ", "en": "Beef", "ko": "소고기", "zh": "牛肉", "ru": "Блюда из говядины"}, "items": [{"names": {"vi": "Bò xào khoai tây chiên", "en": "Stir-fried beef with french fries", "ko": "감자튀김 소고기 볶음", "zh": "薯条炒牛肉", "ru": "Говядина с жареным картофелем"}, "price": "160.000"}, {"names": {"vi": "Bò xào nụ bí", "en": "Stir-fried beef with pumpkin shoots", "ko": "호박순 소고기 볶음", "zh": "南瓜苗炒牛肉", "ru": "Говядина с цветками тыквы"}, "price": "165.000"}, {"names": {"vi": "Bò sốt tiêu đen", "en": "Beef with Black Pepper Sauce", "ko": "블랙페퍼 소스 소고기", "zh": "黑椒牛肉", "ru": "Говядина в соусе из чёрного перца"}, "price": "230.000"}, {"names": {"vi": "Bò lúc lắc", "en": "Shaking beef", "ko": "흔들이 소고기 (보룩락)", "zh": "摇摇牛肉", "ru": "Бифштекс «Лук лак»"}, "price": "230.000"}]}, {"names": {"vi": "MÓN BÊ", "en": "Veal", "ko": "송아지고기", "zh": "小牛肉", "ru": "Блюда из телятины"}, "items": [{"names": {"vi": "Bê xào sả ớt", "en": "Stir-fried Veal with Lemongrass & Chili", "ko": "레몬그라스와 고추를 넣어 볶은 송아지고기", "zh": "香茅辣椒炒小牛肉", "ru": "Телятина с лемонграссом и чили"}, "price": "195.000"}, {"names": {"vi": "Bê tái tương", "en": "Rare Veal with Fermented Soybean Sauce", "ko": "된장 소스를 곁들인 레어 송아지고기", "zh": "酱拌生嫩小牛肉", "ru": "Телятина с соусом"}, "price": "225.000"}, {"names": {"vi": "Bê chao bản gang", "en": "Cast-Iron Pan Seared Veal", "ko": "무쇠 팬에 구운 송아지고기", "zh": "铁板香煎小牛肉", "ru": "Жареная телятина на чугунной сковороде"}, "price": "235.000"}, {"names": {"vi": "Bê hấp đá núi lửa", "en": "Volcanic Stone-Steamed Veal", "ko": "화산석으로 찐 송아지고기", "zh": "火山石蒸小牛肉", "ru": "Телятина на вулканическом камне"}, "price": "255.000"}]}, {"names": {"vi": "MÓN HEO", "en": "Pork", "ko": "돼지고기", "zh": "猪肉", "ru": "Блюда из свинины"}, "items": [{"names": {"vi": "Má heo tắm nắng", "en": "Sun-dried pork cheeks", "ko": "선드라이 돼지볼살", "zh": "风干猪颊肉", "ru": "Свиные щёчки вяленые на солнце"}, "price": "145.000"}, {"names": {"vi": "Má heo nướng", "en": "Grilled pork cheeks", "ko": "돼지볼살 구이", "zh": "烤猪颊肉", "ru": "Жареные свиные щёчки"}, "price": "145.000"}, {"names": {"vi": "Thăn heo chiên xù phô mai", "en": "Cheese-stuffed breaded pork loin", "ko": "치즈 스터프드 돈까스", "zh": "芝士夹心炸猪排", "ru": "Хрустящая свиная вырезка с сыром"}, "price": "155.000"}, {"names": {"vi": "Vai heo chiên xù", "en": "Crispy Fried Pork Shoulder", "ko": "바삭한 돼지 목살 튀김", "zh": "香酥炸猪肩肉", "ru": "Свиная лопатка в хрустящей панировке"}, "price": "150.000"}, {"names": {"vi": "Sườn heo nướng BBQ", "en": "BBQ Grilled Pork Ribs", "ko": "BBQ 돼지갈비 구이", "zh": "BBQ烤猪排骨", "ru": "Свиные рёбра BBQ"}, "price": "235.000"}, {"names": {"vi": "Sườn heo chiên tỏi", "en": "Garlic fried pork ribs", "ko": "마늘튀김 폭립", "zh": "蒜香炸排骨", "ru": "Свиные рёбра с чесноком"}, "price": "235.000"}, {"names": {"vi": "Sườn heo nướng tảng", "en": "Whole Rack of Grilled Pork Ribs", "ko": "통돼지갈비 구이", "zh": "整排烤猪肋排", "ru": "Запечённые свиные рёбра порцией"}, "price": "480.000"}]}, {"names": {"vi": "MÓN ẾCH VÀ LƯƠN", "en": "Frog & Eel", "ko": "개구리 & 장어", "zh": "田鸡 & 鳝鱼", "ru": "Блюда из лягушки и угря"}, "items": [{"names": {"vi": "Ếch chiên mắm", "en": "Fried Frog with Fish Sauce", "ko": "피시소스를 곁들인 개구리 튀김", "zh": "鱼露炸田鸡", "ru": "Лягушка в рыбном соусе"}, "price": "150.000"}, {"names": {"vi": "Ếch rang muối", "en": "Salt-Roasted Frog", "ko": "소금 볶음 개구리", "zh": "椒盐田鸡", "ru": "Лягушка с солью"}, "price": "150.000"}, {"names": {"vi": "Ếch um bầu", "en": "Vietnamese Braised Frog with Bottle Gourd", "ko": "애호박을 넣은 개구리 조림", "zh": "蒲瓜焖田鸡", "ru": "Лягушка с тыквой"}, "price": "185.000"}, {"names": {"vi": "Lươn xào xả ớt", "en": "Stir-fried Eel with Lemongrass & Chili", "ko": "레몬그라스와 고추를 곁들인 장어볶음", "zh": "香茅辣椒炒鳝鱼", "ru": "Угорь с лемонграссом и чили"}, "price": "165.000"}, {"names": {"vi": "Lươn om chuối", "en": "Braised Eel with Green Banana", "ko": "풋바나나를 넣은 장어조림", "zh": "青香蕉焖鳝鱼", "ru": "Угорь с бананом"}, "price": "285.000"}]}, {"names": {"vi": "MỰC ỐNG VÀ MỰC MỘT NẮNG", "en": "Squid & Semi-Dried Squid", "ko": "오징어 & 반건조 오징어", "zh": "鲜鱿鱼和一夜干鱿鱼", "ru": "Кальмары"}, "items": [{"names": {"vi": "Mực ống chiên xù", "en": "Crispy Fried Squid", "ko": "바삭하게 튀긴 오징어", "zh": "香酥炸鱿鱼", "ru": "Кальмары в хрустящей панировке"}, "price": "230.000"}, {"names": {"vi": "Mực ống chiên bơ tỏi", "en": "Fried Squid with Garlic Butter", "ko": "갈릭 버터 오징어", "zh": "蒜香黄油鱿鱼", "ru": "Кальмары с чесночным маслом"}, "price": "230.000"}, {"names": {"vi": "Mực một nắng chiên mắm", "en": "Sun-Dried Squid Fried with Fish Sauce", "ko": "피시소스로 볶은 반건조 오징어", "zh": "鱼露香煎一晒鱿鱼", "ru": "Вяленые кальмары в рыбном соусе"}, "price": "375.000"}, {"names": {"vi": "Mực một nắng nướng mọi", "en": "Grilled Sun-Dried Squid", "ko": "직화로 구운 반건조 오징어", "zh": "原味烤一晒鱿鱼", "ru": "Вяленые кальмары на гриле"}, "price": "375.000"}, {"names": {"vi": "Mực một nắng nướng sa tế", "en": "Sun-Dried Squid Grilled with Satay Sauce", "ko": "사테소스를 발라 구운 반건조 오징어", "zh": "沙爹酱烤一晒鱿鱼", "ru": "Вяленые кальмары с сатэ на гриле"}, "price": "375.000"}]}, {"names": {"vi": "SASHIMI", "en": "SASHIMI", "ko": "SASHIMI", "zh": "SASHIMI", "ru": "SASHIMI"}, "items": [{"names": {"vi": "Sashimi tổng hợp", "en": "Assorted Sashimi", "ko": "모둠 사시미", "zh": "刺身拼盘", "ru": "Ассорти сашими"}, "price": "325.000"}, {"names": {"vi": "Sashimi cá hồi", "en": "Salmon Sashimi", "ko": "연어 사시미", "zh": "三文鱼刺身", "ru": "Сашими из лосося"}, "price": "165.000"}, {"names": {"vi": "Sashimi cá trích vàng", "en": "Golden Herring Sashimi", "ko": "황금 청어알", "zh": "黄金鱼籽鲱鱼", "ru": "Сашими из сельди"}, "price": "165.000"}, {"names": {"vi": "Sashimi cá trích đỏ", "en": "Red Herring Sashimi", "ko": "붉은 청어알", "zh": "红鱼籽鲱鱼", "ru": "Сашими из красной сельди"}, "price": "165.000"}]}, {"names": {"vi": "HẢI SẢN", "en": "Seafood", "ko": "해산물", "zh": "海鲜", "ru": "Морепродукты"}, "items": [{"names": {"vi": "Cá chim biển / Pomfret", "en": "병어", "ko": "鲳鱼", "zh": "Морской помфрет", "ru": "Морской помфрет"}, "price": "600.000/kg (Hấp xì dầu / Chiên giòn / Canh chua / Lẩu)"}, {"names": {"vi": "Cá bơn Hàn Quốc / Korean Halibut", "en": "한국산 광어", "ko": "韩国比目鱼", "zh": "Корейская камбала", "ru": "Корейская камбала"}, "price": "1.450.000/kg (Sashimi / Hấp xì dầu / Nướng muối ớt)"}, {"names": {"vi": "Cá chình / Canger Eel", "en": "장어", "ko": "鳗鱼", "zh": "Угорь", "ru": "Угорь"}, "price": "350.000 (Hấp miến / Nướng sốt xì dầu)"}, {"names": {"vi": "Cá mú / Grouper", "en": "바리", "ko": "石斑鱼", "zh": "Групер", "ru": "Групер"}, "price": "650.000/kg (Hấp xì dầu / Chiên giòn / Sashimi)"}, {"names": {"vi": "Sò bung / Venus Clam", "en": "백합조개", "ko": "花蛤", "zh": "Венерка", "ru": "Венерка"}, "price": "450.000/kg"}, {"names": {"vi": "Sò dương / Surf Clam", "en": "북방조개", "ko": "北寄贝", "zh": "Серфклем", "ru": "Серфклем"}, "price": "350.000/kg"}, {"names": {"vi": "Sò mía / Razor Clam", "en": "북방조개", "ko": "蛏子", "zh": "Морской нож", "ru": "Морской нож"}, "price": "300.000/kg"}, {"names": {"vi": "Sò lông xanh / Hairy Clam", "en": "털조개", "ko": "毛蚶", "zh": "Волосатая ракушка", "ru": "Волосатая ракушка"}, "price": "220.000/kg"}, {"names": {"vi": "Sò méo / Ark Clam", "en": "피조개", "ko": "赤贝", "zh": "Моллюск", "ru": "Моллюск"}, "price": "200.000/kg"}, {"names": {"vi": "Sò mai / Comb Pen Shell", "en": "창조개", "ko": "海月贝", "zh": "Морской гребешок", "ru": "Морской гребешок"}, "price": "110.000/con"}, {"names": {"vi": "Nghêu đen / Black Clam", "en": "검은조개", "ko": "黑蛤蜊", "zh": "Чёрные моллюски", "ru": "Чёрные моллюски"}, "price": "300.000/kg"}, {"names": {"vi": "Chíp chíp / Small Wedge Clam", "en": "비단조개", "ko": "细脂蛤", "zh": "Клемы", "ru": "Клемы"}, "price": "250.000/kg"}, {"names": {"vi": "Vẹm xanh / Green-lipped Mussel", "en": "초록입홍합", "ko": "翡翠贻贝", "zh": "Мидии", "ru": "Мидии"}, "price": "220.000/kg"}, {"names": {"vi": "Hàu / Oyster", "en": "굴", "ko": "牡蛎", "zh": "Устрица", "ru": "Устрица"}, "price": "170.000/kg"}, {"names": {"vi": "Ốc hương / Sweet Snail", "en": "바빌로니아 소라", "ko": "香螺", "zh": "Морские улитки", "ru": "Морские улитки"}, "price": "690.000/kg"}, {"names": {"vi": "Ốc gai / Spiny Murex", "en": "뿔소라", "ko": "刺螺", "zh": "Улитка с шипами", "ru": "Улитка с шипами"}, "price": "550.000/kg"}, {"names": {"vi": "Bề bề / Mantis Shrimp", "en": "갯가재", "ko": "皮皮虾", "zh": "Креветка-богомол", "ru": "Креветка-богомол"}, "price": "1.950.000/kg"}, {"names": {"vi": "Tôm sú / Tiger Prawn", "en": "블랙타이거 새우", "ko": "黑虎虾", "zh": "Тигровая креветка", "ru": "Тигровая креветка"}, "price": "900.000/kg"}, {"names": {"vi": "Tôm mũ ni / Slipper Lobster", "en": "매미새우", "ko": "琵琶虾", "zh": "Лобстер-тапочка", "ru": "Лобстер-тапочка"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Cua bể thịt / Meaty Mud Crab", "en": "수꽃게", "ko": "肉蟹", "zh": "Морской краб", "ru": "Морской краб"}, "price": "950.000/kg"}, {"names": {"vi": "Cua bể gạch / Female Mud Crab with Roe", "en": "암꽃게 알배기", "ko": "膏蟹", "zh": "Краб с икрой", "ru": "Краб с икрой"}, "price": "1.050.000/kg"}, {"names": {"vi": "Ghẹ / Blue Swimming Crab", "en": "꽃게", "ko": "花蟹", "zh": "Краб-плавунец", "ru": "Краб-плавунец"}, "price": "1.150.000/kg"}, {"names": {"vi": "Cua hoàng đế / King Crab", "en": "킹크랩", "ko": "帝王蟹", "zh": "Камчатский краб", "ru": "Камчатский краб"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Bào ngư / Abalone", "en": "전복", "ko": "鲍鱼", "zh": "Морское ушко", "ru": "Морское ушко"}, "price": "1.250.000/kg"}, {"names": {"vi": "Mực lá / Cuttlefish", "en": "갑오징어", "ko": "墨鱼", "zh": "Каракатица", "ru": "Каракатица"}, "price": "800.000/kg"}, {"names": {"vi": "Mực trứng / Egg Squid", "en": "알오징어", "ko": "籽乌贼", "zh": "Кальмар с икрой", "ru": "Кальмар с икрой"}, "price": "700.000/kg"}, {"names": {"vi": "Tôm hùm xanh / Green Spiny Lobster", "en": "청색가시가재", "ko": "青龙虾", "zh": "Синий лобстер", "ru": "Синий лобстер"}, "price": "1.900.000/kg"}, {"names": {"vi": "Tôm hùm bông / Ornate Spiny Lobster", "en": "꽃무늬가시가재", "ko": "锦绣龙虾", "zh": "Лобстер с цветным панцирем", "ru": "Лобстер с цветным панцирем"}, "price": "2.450.000/kg"}, {"names": {"vi": "Tôm hùm Alaska / Alaska Lobster", "en": "알래스카 랍스터", "ko": "阿拉斯加龙虾", "zh": "Аляскинский лобстер", "ru": "Аляскинский лобстер"}, "price": "2.250.000/kg"}]}, {"names": {"vi": "LẨU", "en": "Hotpot", "ko": "전골", "zh": "火锅", "ru": "Хотпот"}, "items": [{"names": {"vi": "Lẩu Thái (hải sản tự chọn)", "en": "Thai Hot Pot (Choose of Seafood)", "ko": "태국식 전골 (해산물 선택)", "zh": "泰式火锅（海鲜自选)", "ru": "Тайский хотпот"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Lẩu chua cay (hải sản tự chọn)", "en": "Spicy & Sour Hot Pot (Choose of Seafood)", "ko": "매콤새콤 전골", "zh": "酸辣火锅（海鲜自选）", "ru": "Кисло-острый хотпот"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Lẩu riêu cua bắp bò", "en": "Crab Paste Hot Pot with Beef Shank", "ko": "게살 된장 전골과 소고기 사태", "zh": "蟹膏牛腱海鲜火锅", "ru": "Суп с крабом и говяжьей голяшкой"}, "price": "420.000"}]}, {"names": {"vi": "CƠM CANH", "en": "Home-Style Meals", "ko": "가정식", "zh": "家常菜", "ru": "Домашние блюда"}, "items": [{"names": {"vi": "Cơm trắng", "en": "Steamed Rice", "ko": "공기밥", "zh": "白米饭", "ru": "Белый рис"}, "price": "25.000"}, {"names": {"vi": "Rau muống xào tỏi", "en": "Stir-Fried Water Spinach with Garlic", "ko": "마늘 공심채 볶음", "zh": "蒜蓉空心菜", "ru": "Жареный водяной шпинат с чесноком"}, "price": "50.000"}, {"names": {"vi": "Mùng tơi xào tỏi", "en": "Stir-Fried Malabar Spinach with Garlic", "ko": "마늘 말라바르시금치 볶음", "zh": "蒜蓉木耳菜", "ru": "Жареный малабарский шпинат с чесноком"}, "price": "50.000"}, {"names": {"vi": "Nụ bí xào tỏi", "en": "Stir-Fried Squash Shoots with Garlic", "ko": "마늘 호박순 볶음", "zh": "蒜蓉炒南瓜苗", "ru": "Жареные цветочные бутоны тыквы с чесноком"}, "price": "70.000"}, {"names": {"vi": "Trứng rán", "en": "Fried Egg", "ko": "계란후라이", "zh": "煎鸡蛋", "ru": "Жареные яйца"}, "price": "50.000"}, {"names": {"vi": "Ba chỉ rang cháy cạnh", "en": "Crispy Caramelized Pork Belly", "ko": "바삭하게 볶은 삼겹살", "zh": "香煎五花肉", "ru": "Жареная свиная грудинка"}, "price": "125.000"}, {"names": {"vi": "Cơm rang hải sản", "en": "Seafood Fried Rice", "ko": "해물볶음밥", "zh": "海鲜炒饭", "ru": "Жареный рис с морепродуктами"}, "price": "95.000"}, {"names": {"vi": "Mỳ xào hải sản", "en": "Stir-Fried Seafood Noodles", "ko": "해물볶음면", "zh": "海鲜炒面", "ru": "Жареная лапша с морепродуктами"}, "price": "95.000"}, {"names": {"vi": "Miến xào hải sản", "en": "Stir-Fried Seafood Glass Noodles", "ko": "해물 잡채", "zh": "海鲜炒粉丝", "ru": "Жареная стеклянная лапша с морепродуктами"}, "price": "115.000"}, {"names": {"vi": "Cơm chiên cá hồi", "en": "Salmon Fried Rice", "ko": "연어 볶음밥", "zh": "三文鱼炒饭", "ru": "Жареный рис с лососем"}, "price": "115.000"}, {"names": {"vi": "Bò xào khoai tây", "en": "Stir-Fried Beef with French Fries", "ko": "감자튀김 소고기 볶음", "zh": "薯条炒牛肉", "ru": "Говядина с картофелем"}, "price": "160.000"}, {"names": {"vi": "Tôm mực xào dứa", "en": "Stir-Fried Shrimp & Squid with Pineapple", "ko": "파인애플 새우·오징어 볶음", "zh": "菠萝炒虾仁鱿鱼", "ru": "Жареные креветки и кальмары с ананасом"}, "price": "230.000"}]}, {"names": {"vi": "ĐỒ UỐNG", "en": "Beverages", "ko": "음료", "zh": "饮料", "ru": "Напитки"}, "items": [{"names": {"vi": "Bình trà hoa quả nhiệt đới", "en": "Tropical Fruit Tea Pot", "ko": "열대과일 차 주전자", "zh": "热带水果茶壶", "ru": "Кувшин с тропическим фруктовым чаем"}, "price": "95.000"}, {"names": {"vi": "Trà bí đao", "en": "Winter Melon Tea", "ko": "동과차", "zh": "冬瓜茶", "ru": "Чай из зимней дыни"}, "price": "25.000"}, {"names": {"vi": "Nước sấu đá", "en": "Iced Dracontomelon Drink", "ko": "아이스 사우 열매 음료", "zh": "冰镇越南酸果饮", "ru": "Напиток из плодов драцени с льдом"}, "price": "25.000"}, {"names": {"vi": "Cam tươi", "en": "Orange juice", "ko": "오렌지 주스", "zh": "鲜榨橙汁", "ru": "Свежевыжатый апельсиновый сок"}, "price": "35.000"}, {"names": {"vi": "Dưa hấu", "en": "Watermelon juice", "ko": "수박 주스", "zh": "鲜榨西瓜汁", "ru": "Арбузный сок"}, "price": "30.000"}, {"names": {"vi": "Dứa (Thơm)", "en": "Pineapple juice", "ko": "파인애플 주스", "zh": "鲜榨菠萝汁", "ru": "Ананасовый сок"}, "price": "30.000"}, {"names": {"vi": "Cà rốt", "en": "Carrot juice", "ko": "당근 주스", "zh": "鲜榨胡萝卜汁", "ru": "Морковный сок"}, "price": "30.000"}, {"names": {"vi": "Chanh leo", "en": "Passion fruit juice", "ko": "패션프루트 주스", "zh": "鲜榨百香果汁", "ru": "Маракуйевый сок"}, "price": "30.000"}, {"names": {"vi": "Chanh tươi", "en": "Fresh Lime Juice", "ko": "생라임 주스", "zh": "鲜榨青柠汁", "ru": "Свежевыжатый лимонный сок"}, "price": "25.000"}, {"names": {"vi": "Pepsi", "en": "Pepsi", "ko": "펩시", "zh": "百事可乐", "ru": "Пепси"}, "price": "17.000"}, {"names": {"vi": "Pepsi Zero Sugar", "en": "Pepsi Zero Sugar", "ko": "펩시 제로", "zh": "百事零糖", "ru": "Пепси без сахара"}, "price": "17.000"}, {"names": {"vi": "7 Up", "en": "7 Up", "ko": "세븐업", "zh": "七喜", "ru": "7 Ап"}, "price": "17.000"}, {"names": {"vi": "Twister", "en": "Twister", "ko": "트위스터", "zh": "柠檬汽水", "ru": "Твистер"}, "price": "17.000"}, {"names": {"vi": "Aquafina", "en": "Bottled Water", "ko": "생수", "zh": "矿泉水", "ru": "Вода"}, "price": "10.000"}, {"names": {"vi": "Larue", "en": "Larue Beer (Can)", "ko": "라루 맥주", "zh": "拉鲁啤酒", "ru": "Пиво Ларю"}, "price": "18.000"}, {"names": {"vi": "Huda (lon cao)", "en": "Huda Beer (Tall Can)", "ko": "후다 맥주 (롱캔)", "zh": "虎达啤酒(高罐)", "ru": "Пиво Худа"}, "price": "20.000"}, {"names": {"vi": "Tiger bạc (lon 250ml)", "en": "Tiger Crystal Beer (250ml Can)", "ko": "타이거 크리스탈 맥주 (250ml)", "zh": "虎牌水晶啤酒(250ml)", "ru": "Тигровое пиво Crystal"}, "price": "21.000"}, {"names": {"vi": "Tiger nâu (lon 330ml)", "en": "Tiger Beer (330ml Can)", "ko": "타이거 맥주 (330ml)", "zh": "虎牌啤酒(330ml)", "ru": "Пиво Тайгер"}, "price": "24.000"}, {"names": {"vi": "Tiger bạc (lon 330ml)", "en": "Tiger Crystal Beer (330ml Can)", "ko": "타이거 크리스탈 맥주 (330ml캔)", "zh": "虎牌水晶啤酒(330ml罐)", "ru": "Тигровое Crystal (330ml)"}, "price": "24.000"}, {"names": {"vi": "Tiger bạc (chai 330ml)", "en": "Tiger Crystal Beer (330ml Bottle)", "ko": "타이거 크리스탈 맥주 (330ml병)", "zh": "虎牌水晶啤酒(330ml瓶)", "ru": "Тигровое Crystal бутылка"}, "price": "24.000"}, {"names": {"vi": "Heineken xanh (chai 330ml)", "en": "Heineken Original Beer", "ko": "하이네켄 오리지날 (330ml병)", "zh": "喜力啤酒(330ml瓶)", "ru": "Пиво Heineken"}, "price": "24.000"}, {"names": {"vi": "Heineken bạc (chai 330ml)", "en": "Heineken Silver Beer", "ko": "하이네켄 실버 (330ml병)", "zh": "喜力银（330ml瓶）", "ru": "Heineken Silver"}, "price": "24.000"}, {"names": {"vi": "Heineken 0 độ", "en": "Heineken 0.0 Alcohol-Free Beer", "ko": "하이네켄 무알코올", "zh": "喜力零度啤酒", "ru": "Heineken безалкогольное"}, "price": "26.000"}, {"names": {"vi": "Khăn lạnh", "en": "Wet Towel", "ko": "물티슈", "zh": "湿巾", "ru": "Влажная салфетка"}, "price": "3.000"}]}];
+        let currentLang = 'vi';
+
+        const localization = {
+            'vi': {
+                'back': 'Quay lại chọn ngôn ngữ',
+                'warning': 'Giá chưa bao gồm thuế GTGT / Đơn vị: VND',
+                'unit': 'VND',
+                'kgText': '/kg',
+                'conText': '/con',
+                'mpText': 'Theo thời giá',
+                'viewMenu': 'Xem thực đơn'
+            },
+            'en': {
+                'back': 'Back to Language Selection',
+                'warning': 'Prices are not included VAT / Unit: VND',
+                'unit': 'VND',
+                'kgText': '/kg',
+                'conText': '/pc',
+                'mpText': 'Market Price',
+                'viewMenu': 'View Menu'
+            },
+            'ko': {
+                'back': '언어 선택으로 돌아가기',
+                'warning': '부가세 별도 가격 / 단위: VND',
+                'unit': 'VND',
+                'kgText': '/kg',
+                'conText': '/마리',
+                'mpText': '시가 기준',
+                'viewMenu': '메뉴보기'
+            },
+            'zh': {
+                'back': '返回语言选择',
+                'warning': '价格不含增值税 / 单位: 越南盾 (VND)',
+                'unit': 'VND',
+                'kgText': '/公斤',
+                'conText': '/只',
+                'mpText': '时价',
+                'viewMenu': '查看菜单'
+            },
+            'ru': {
+                'back': 'Назад к выбору языка',
+                'warning': 'Цены указаны без НДС / Валюта: VND',
+                'unit': 'VND',
+                'kgText': '/кг',
+                'conText': '/шт',
+                'mpText': 'Рыночная цена',
+                'viewMenu': 'Посмотреть меню'
+            }
+        };
+
+        function selectLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-switcher').value = lang;
+            
+            // Set warnings/labels based on translation
+            updateLocalizationText();
+            
+            // Render menu UI
+            renderMenu();
+
+            // Hide cover and display menu
+            const cover = document.getElementById('cover-page');
+            const viewer = document.getElementById('menu-viewer');
+            
+            cover.classList.add('hidden');
+            viewer.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        ctx.fillStyle =
-            u.color;
-
-        const size =
-
-            mobile
-            ? 2
-            : 1.5;
-
-        for(
-            let k=0;
-            k<u.trace.length;
-            k++
-        ){
-
-            ctx.fillRect(
-
-                u.trace[k].x,
-                u.trace[k].y,
-
-                size,
-                size
-            );
+        function switchLanguage(lang) {
+            currentLang = lang;
+            updateLocalizationText();
+            renderMenu();
         }
-    }
-}
 
-// ===== START =====
+        function returnToCover() {
+            const cover = document.getElementById('cover-page');
+            const viewer = document.getElementById('menu-viewer');
+            
+            viewer.classList.add('hidden');
+            cover.classList.remove('hidden');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-resize();
+        function updateLocalizationText() {
+            const texts = localization[currentLang];
+            document.getElementById('back-text').textContent = texts.back;
+            document.getElementById('tax-warning-text').textContent = texts.warning;
+        }
 
-requestAnimationFrame(loop);
+        function renderMenu() {
+            const sliderNav = document.getElementById('category-nav-slider');
+            const container = document.getElementById('menu-categories-container');
+            
+            sliderNav.innerHTML = '';
+            container.innerHTML = '';
 
-// ===== PREVENT MOBILE SCROLL =====
+            menuData.forEach((category, catIndex) => {
+                const catName = category.names[currentLang] || category.names['vi'];
+                const categoryId = `cat-section-${catIndex}`;
 
-document.addEventListener(
+                // Render slider element
+                const navBtn = document.createElement('button');
+                navBtn.className = `px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border border-black/10 hover:border-brand-gold/30 hover:bg-white/60 text-gray-700 transition-all flex-shrink-0 bg-white/30`;
+                navBtn.id = `nav-btn-${catIndex}`;
+                navBtn.textContent = catName;
+                navBtn.onclick = () => {
+                    const target = document.getElementById(categoryId);
+                    if (target) {
+                        const offset = 140; // sticky header padding
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                        
+                        // Set active style instantly
+                        document.querySelectorAll('#category-nav-slider button').forEach(b => b.classList.remove('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60'));
+                        navBtn.classList.add('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60');
+                    }
+                };
+                sliderNav.appendChild(navBtn);
 
-    "touchmove",
+                // Build category layout block
+                const catSection = document.createElement('section');
+                catSection.id = categoryId;
+                catSection.className = "scroll-mt-[160px]";
 
-    e => e.preventDefault(),
+                // Title header
+                let titleHtml = `
+                    <div class="flex items-center gap-4 mb-8 border-b border-brand-teal/20 pb-4">
+                        <div class="w-2 h-8 bg-brand-gold rounded-full"></div>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold font-serif text-black uppercase tracking-tight">${catName}</h2>
+                            <p class="text-xs text-brand-gold font-medium uppercase tracking-wider">${category.names['vi']}</p>
+                        </div>
+                    </div>
+                `;
 
-    {
-        passive:false
-    }
-);
+                // Grid layout
+                let gridHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">`;
 
-</script>
+                category.items.forEach(item => {
+                    const itemName = item.names[currentLang] || item.names['vi'];
+                    const originalName = item.names['vi'];
+                    
+                    // Format standard/special prices smoothly
+                    let priceDisplay = item.price;
+                    if (priceDisplay.includes('/')) {
+                        const parts = priceDisplay.split('/');
+                        const mainPrice = parts[0].trim();
+                        const measure = parts[1].trim();
+                        let measureText = measure;
+                        if (measure === 'con') measureText = localization[currentLang].conText;
+                        if (measure === 'kg') measureText = localization[currentLang].kgText;
+                        priceDisplay = `${mainPrice}<span class="text-xs text-gray-500">${measureText}</span>`;
+                    } else if (priceDisplay.toUpperCase() === 'THEO THỜI GIÁ/MP' || priceDisplay.toUpperCase() === 'THEO THỜI GIÁ' || priceDisplay.toUpperCase() === 'MP') {
+                        priceDisplay = `<span class="text-xs text-brand-gold font-semibold uppercase tracking-wider">${localization[currentLang].mpText}</span>`;
+                    } else {
+                        priceDisplay = `${priceDisplay} <span class="text-xs text-gray-500">${localization[currentLang].unit}</span>`;
+                    }
 
+                    gridHtml += `
+                        <div class="group flex flex-col justify-between p-3 rounded-xl hover:bg-black/5 transition-all duration-300">
+                            <div class="flex items-start justify-between w-full">
+                                <span class="text-black font-medium group-hover:text-brand-gold transition-colors text-base md:text-lg leading-tight">
+                                    ${itemName}
+                                </span>
+                                <span class="menu-dots hidden md:block"></span>
+                                <span class="text-black font-bold text-right font-mono text-base md:text-lg ml-4 flex-shrink-0">
+                                    ${priceDisplay}
+                                </span>
+                            </div>
+                            <!-- Show Vietnamese name subtext if not in Vietnamese view -->
+                            ${currentLang !== 'vi' ? `<span class="text-xs text-gray-500 italic mt-1">${originalName}</span>` : ''}
+                        </div>
+                    `;
+                });
+
+                gridHtml += `</div>`;
+                catSection.innerHTML = titleHtml + gridHtml;
+                container.appendChild(catSection);
+            });
+
+            // Scroll spy highlighting
+            initScrollSpy();
+        }
+
+        function initScrollSpy() {
+            const sections = document.querySelectorAll('#menu-categories-container section');
+            const navButtons = document.querySelectorAll('#category-nav-slider button');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-150px 0px -60% 0px',
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = Array.from(sections).indexOf(entry.target);
+                        navButtons.forEach(btn => btn.classList.remove('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60'));
+                        
+                        if (navButtons[index]) {
+                            navButtons[index].classList.add('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60');
+                            // Center active nav button in slider view smoothly
+                            navButtons[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
+    </script>
 </body>
 </html>
