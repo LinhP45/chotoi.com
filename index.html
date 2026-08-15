@@ -2,8 +2,9 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hẻm Quán - Seafood & Vietnamese Traditional Cuisine | Since 2013</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Hẻm Quán - Seafood &amp; Vietnamese Traditional Cuisine | Since 2013</title>
+    <meta name="theme-color" content="#F3EBD4">
     <!-- Font Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,16 +16,17 @@
                 extend: {
                     colors: {
                         brand: {
-                            teal: '#006885',
-                            tealHover: '#005C76',
-                            tealLight: '#CCE1E7',
-                            tealMist: '#F2F7F9',
-                            gold: '#DBA410',
-                            goldLight: '#FCF5C5',
-                            crimson: '#A62C2A',
-                            charcoal: '#1A2328',
-                            amber: '#E39213',
-                            accent: '#D4AF37'
+                            orange: '#E85427',
+                            orangeDark: '#C8401A',
+                            orangeSoft: '#FAE1D6',
+                            teal: '#17ABB0',
+                            tealDark: '#0E8A8F',
+                            tealSoft: '#DCF1F2',
+                            cream: '#F3EBD4',
+                            creamDeep: '#EAE0C4',
+                            creamLight: '#FBF6E9',
+                            ink: '#2A211A',
+                            muted: '#7A6E5D'
                         }
                     },
                     fontFamily: {
@@ -36,11 +38,37 @@
         }
     </script>
     <style>
-        body {
-            /* Đổi nền thành màu be và chữ màu đen */
-            background-color: #F5F5DC; 
-            color: #111827; 
+        /* ===== Chống tràn ngang (fix kéo lệch trên điện thoại) ===== */
+        html {
             overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            margin: 0;
+            background-color: #F3EBD4;
+            color: #2A211A;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            overflow-x: clip; /* giữ position:sticky hoạt động, vẫn cắt tràn ngang */
+        }
+        /* Không cho bất kỳ ảnh / bảng / pre nào đẩy rộng trang */
+        img, svg, video, table {
+            max-width: 100%;
+            height: auto;
+        }
+        /* Cho phép ngắt dòng tên món dài (RU / ZH / tên kèm gạch chéo) */
+        .wrap-anywhere {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+        /* Ẩn thanh cuộn ngang của dải danh mục */
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
         }
         /* Refined Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -48,23 +76,23 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #F5F5DC;
+            background: #F3EBD4;
         }
         ::-webkit-scrollbar-thumb {
-            background: #006885;
+            background: #E85427;
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #DBA410;
+            background: #17ABB0;
         }
-        /* Elegant golden spotlight glow */
+        /* Ambient glow theo tông logo */
         .spotlight {
-            background: radial-gradient(circle 600px at 50% -100px, rgba(0, 104, 133, 0.15), transparent);
+            background-image: radial-gradient(circle 600px at 50% -100px, rgba(232, 84, 39, 0.11), transparent);
         }
-        .spotlight-amber {
-            background: radial-gradient(circle 400px at 100% 80%, rgba(219, 164, 16, 0.08), transparent);
+        .spotlight-teal {
+            background-image: radial-gradient(circle 420px at 100% 80%, rgba(23, 171, 176, 0.09), transparent);
         }
-        /* Wave line animation for active categories */
+        /* Gạch chân danh mục đang xem */
         .active-dot {
             position: relative;
         }
@@ -76,23 +104,20 @@
             transform: translateX(-50%);
             width: 16px;
             height: 3px;
-            background-color: #DBA410;
+            background-color: #E85427;
             border-radius: 9999px;
             transition: width 0.3s ease;
         }
-        /* Glassmorphism Refraction (Sửa lại viền và shadow cho nền sáng) */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.72);
             backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(232, 84, 39, 0.18);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
         .hero-panel {
-            /* Làm sáng hộp chứa thông tin */
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(0, 104, 133, 0.05) 100%);
-            border: 1px solid rgba(0, 104, 133, 0.2);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(23, 171, 176, 0.08) 100%);
+            border: 1px solid rgba(232, 84, 39, 0.22);
         }
-        /* Animation effects */
         .slide-up {
             animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
@@ -107,31 +132,30 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
-        /* Custom layout line between menu item name and price (Đổi gạch nối sang đen nhạt) */
+        /* Đường chấm nối tên món và giá (chỉ hiện từ md trở lên) */
         .menu-dots {
             flex-grow: 1;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+            min-width: 24px;
+            border-bottom: 1px dashed rgba(42, 33, 26, 0.22);
             margin: 0 12px;
             position: relative;
             top: -4px;
         }
-        /* ==== Header & Search additions ==== */
         #menu-header {
             transition: box-shadow 0.3s ease, padding 0.3s ease;
         }
         #menu-header.is-scrolled {
-            box-shadow: 0 4px 20px -6px rgba(0, 104, 133, 0.15);
+            box-shadow: 0 4px 20px -6px rgba(232, 84, 39, 0.22);
         }
         #search-input {
             transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
         #search-input:focus {
-            box-shadow: 0 0 0 3px rgba(0, 104, 133, 0.15);
+            box-shadow: 0 0 0 3px rgba(232, 84, 39, 0.18);
         }
         #search-clear-btn {
             transition: opacity 0.15s ease, transform 0.15s ease;
         }
-        /* Dish image placeholder */
         .dish-thumb {
             position: relative;
             overflow: hidden;
@@ -148,8 +172,9 @@
         .no-results-wrap {
             animation: fadeIn 0.3s ease-out forwards;
         }
-        #category-nav-slider button.nav-hidden {
-            display: none;
+        /* Dải danh mục: kéo ngang trong khung riêng, không kéo cả trang */
+        #category-nav-wrap {
+            overscroll-behavior-x: contain;
         }
     </style>
 </head>
@@ -157,90 +182,86 @@
 
     <!-- Ambient Spotlights -->
     <div class="fixed inset-0 z-0 pointer-events-none spotlight"></div>
-    <div class="fixed inset-0 z-0 pointer-events-none spotlight-amber"></div>
+    <div class="fixed inset-0 z-0 pointer-events-none spotlight-teal"></div>
 
     <!-- MAIN WRAPPER -->
-    <main class="relative z-10 flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-12 flex flex-col justify-center">
-        
+    <main class="relative z-10 flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-10 flex flex-col justify-center">
+
         <!-- COVER / LANDING PAGE -->
-        <section id="cover-page" class="w-full max-w-3xl mx-auto text-center py-8 md:py-16">
+        <section id="cover-page" class="w-full max-w-3xl mx-auto text-center py-4 md:py-12">
+
+            <!-- LOGO -->
+            <img src="data:image/png;base64,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" alt="Hẻm Quán" class="w-56 sm:w-72 md:w-80 mx-auto mb-6 slide-up" style="animation-delay: 80ms;">
+
             <!-- Brand Badge -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-teal bg-brand-teal/10 text-brand-teal font-semibold tracking-wider uppercase mb-6 slide-up" style="animation-delay: 100ms;">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M12,3C12,3 10,7 10,9C10,10.1 10.9,11 12,11C13.1,11 14,10.1 14,9C14,7 12,3 12,3M12,13C8,13 4.5,15.5 3.1,19C2.7,20 3.5,21 4.5,21H19.5C20.5,21 21.3,20 20.9,19C19.5,15.5 16,13 12,13Z"/>
-                </svg>
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-teal bg-brand-teal/10 text-brand-tealDark text-xs sm:text-sm font-semibold tracking-wider uppercase mb-5 slide-up" style="animation-delay: 160ms;">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-orange"></span>
                 Established 2013
             </div>
 
-            <!-- Restaurant Name & Tagline -->
-            <h1 class="text-6xl md:text-8xl font-bold tracking-tight text-black font-serif mb-2 slide-up" style="animation-delay: 200ms;">
-                Hẻm Quán
-            </h1>
-            <p class="text-brand-gold text-sm md:text-lg font-medium uppercase tracking-widest max-w-2xl mx-auto px-4 mb-4 slide-up" style="animation-delay: 300ms;">
-                Seafood & Vietnamese Traditional Cuisine
+            <p class="text-brand-orange text-sm md:text-lg font-medium uppercase tracking-widest max-w-2xl mx-auto px-2 mb-4 slide-up wrap-anywhere" style="animation-delay: 240ms;">
+                Seafood &amp; Vietnamese Traditional Cuisine
             </p>
-            
-            <div class="w-16 h-[2px] bg-brand-gold mx-auto mb-10 slide-up" style="animation-delay: 400ms;"></div>
+
+            <div class="w-16 h-[2px] bg-brand-orange mx-auto mb-8 slide-up" style="animation-delay: 320ms;"></div>
 
             <!-- Address and Info Box -->
-            <div class="hero-panel rounded-2xl p-6 md:p-8 max-w-xl mx-auto mb-12 shadow-xl slide-up" style="animation-delay: 500ms;">
-                <div class="flex items-center justify-center gap-2 text-brand-teal text-sm mb-4 font-medium">
-                    <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="hero-panel rounded-2xl p-5 sm:p-6 md:p-8 max-w-xl mx-auto mb-10 shadow-xl slide-up" style="animation-delay: 400ms;">
+                <div class="flex items-center justify-center gap-2 text-brand-tealDark text-xs sm:text-sm mb-4 font-medium wrap-anywhere">
+                    <svg class="w-4 h-4 text-brand-orange flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                     <span>Premium Authentic Taste Experience</span>
                 </div>
-                
-                <h3 class="text-black text-base font-semibold uppercase tracking-wider mb-4">Select Language / Chọn Ngôn Ngữ</h3>
-                
+
+                <h3 class="text-brand-ink text-sm sm:text-base font-semibold uppercase tracking-wider mb-4">Select Language / Chọn Ngôn Ngữ</h3>
+
                 <!-- Language Selector Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="selectLanguage('vi')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                    <button onclick="selectLanguage('vi')" class="flex items-center gap-3 px-4 sm:px-5 py-4 rounded-xl bg-white border border-brand-ink/10 hover:border-brand-orange/60 hover:bg-brand-orangeSoft/40 transition-all duration-300 group text-left shadow-sm min-w-0">
                         <span class="text-2xl">🇻🇳</span>
-                        <div class="flex-grow">
-                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">Tiếng Việt</p>
-                            <p class="text-xs text-gray-500">Menu Tiếng Việt</p>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-brand-ink font-semibold text-sm group-hover:text-brand-orange transition-colors">Tiếng Việt</p>
+                            <p class="text-xs text-brand-muted">Menu Tiếng Việt</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-orange group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <button onclick="selectLanguage('en')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                    <button onclick="selectLanguage('en')" class="flex items-center gap-3 px-4 sm:px-5 py-4 rounded-xl bg-white border border-brand-ink/10 hover:border-brand-orange/60 hover:bg-brand-orangeSoft/40 transition-all duration-300 group text-left shadow-sm min-w-0">
                         <span class="text-2xl">🇬🇧</span>
-                        <div class="flex-grow">
-                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">English</p>
-                            <p class="text-xs text-gray-500">English Menu</p>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-brand-ink font-semibold text-sm group-hover:text-brand-orange transition-colors">English</p>
+                            <p class="text-xs text-brand-muted">English Menu</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-orange group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <button onclick="selectLanguage('ko')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                    <button onclick="selectLanguage('ko')" class="flex items-center gap-3 px-4 sm:px-5 py-4 rounded-xl bg-white border border-brand-ink/10 hover:border-brand-orange/60 hover:bg-brand-orangeSoft/40 transition-all duration-300 group text-left shadow-sm min-w-0">
                         <span class="text-2xl">🇰🇷</span>
-                        <div class="flex-grow">
-                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">한국어</p>
-                            <p class="text-xs text-gray-500">한국어 메뉴</p>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-brand-ink font-semibold text-sm group-hover:text-brand-orange transition-colors">한국어</p>
+                            <p class="text-xs text-brand-muted">한국어 메뉴</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-orange group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <button onclick="selectLanguage('zh')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left shadow-sm">
+                    <button onclick="selectLanguage('zh')" class="flex items-center gap-3 px-4 sm:px-5 py-4 rounded-xl bg-white border border-brand-ink/10 hover:border-brand-orange/60 hover:bg-brand-orangeSoft/40 transition-all duration-300 group text-left shadow-sm min-w-0">
                         <span class="text-2xl">🇨🇳</span>
-                        <div class="flex-grow">
-                            <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">中文</p>
-                            <p class="text-xs text-gray-500">中文菜单</p>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-brand-ink font-semibold text-sm group-hover:text-brand-orange transition-colors">中文</p>
+                            <p class="text-xs text-brand-muted">中文菜单</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-orange group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <button onclick="selectLanguage('ru')" class="flex items-center gap-3 px-5 py-4 rounded-xl bg-white border border-black/10 hover:border-brand-gold/50 hover:bg-gray-50 transition-all duration-300 group text-left sm:col-span-2 shadow-sm">
+                    <button onclick="selectLanguage('ru')" class="flex items-center gap-3 px-4 sm:px-5 py-4 rounded-xl bg-white border border-brand-ink/10 hover:border-brand-orange/60 hover:bg-brand-orangeSoft/40 transition-all duration-300 group text-left sm:col-span-2 shadow-sm min-w-0">
                         <span class="text-2xl">🇷🇺</span>
-                        <div class="flex-grow flex items-center justify-between pr-4">
-                            <div>
-                                <p class="text-black font-semibold text-sm group-hover:text-brand-gold transition-colors">Русский</p>
-                                <p class="text-xs text-gray-500">Русское меню</p>
-                            </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-brand-ink font-semibold text-sm group-hover:text-brand-orange transition-colors">Русский</p>
+                            <p class="text-xs text-brand-muted">Русское меню</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 group-hover:text-brand-gold group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4 h-4 text-brand-muted group-hover:text-brand-orange group-hover:translate-x-1 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
             </div>
@@ -249,25 +270,20 @@
         <!-- MENU VIEWER (HIDDEN BY DEFAULT) -->
         <section id="menu-viewer" class="hidden w-full fade-in">
             <!-- Header Controls / Sticky bar -->
-            <div id="menu-header" class="sticky top-0 z-40 bg-[#F5F5DC]/95 backdrop-blur-md pt-4 pb-3 border-b border-black/10 mb-8 -mx-4 px-4 sm:-mx-6 sm:px-6">
-                <!-- Row 1: Back / Brand / Language -->
-                <div class="flex items-center justify-between gap-3 mb-3">
-                    <button onclick="returnToCover()" class="inline-flex items-center gap-1.5 text-sm text-gray-600 hover:text-brand-gold transition-colors font-medium flex-shrink-0">
+            <div id="menu-header" class="sticky top-0 z-40 bg-[#F3EBD4] supports-[backdrop-filter]:bg-[#F3EBD4]/95 backdrop-blur-md pt-3 pb-3 border-b border-brand-orange/15 mb-6 -mx-4 px-4 sm:-mx-6 sm:px-6">
+                <!-- Row 1: Back / Logo / Language -->
+                <div class="flex items-center justify-between gap-2 sm:gap-3 mb-3">
+                    <button onclick="returnToCover()" class="inline-flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-orange transition-colors font-medium flex-shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
-                        <span id="back-text" class="hidden sm:inline">Quay lại / Back</span>
+                        <span id="back-text" class="hidden md:inline">Quay lại / Back</span>
                     </button>
 
-                    <div class="hidden sm:flex items-center gap-2 text-black/80">
-                        <svg class="w-4 h-4 text-brand-gold flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12,3C12,3 10,7 10,9C10,10.1 10.9,11 12,11C13.1,11 14,10.1 14,9C14,7 12,3 12,3M12,13C8,13 4.5,15.5 3.1,19C2.7,20 3.5,21 4.5,21H19.5C20.5,21 21.3,20 20.9,19C19.5,15.5 16,13 12,13Z"/>
-                        </svg>
-                        <span class="font-serif font-semibold tracking-wide text-sm md:text-base">Hẻm Quán</span>
-                    </div>
+                    <img src="data:image/png;base64,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" alt="Hẻm Quán" class="h-9 sm:h-10 md:h-12 w-auto flex-shrink-0">
 
                     <!-- Quick Lang Switcher -->
-                    <select id="lang-switcher" onchange="switchLanguage(this.value)" class="bg-white text-black border border-black/10 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-brand-gold font-medium shadow-sm flex-shrink-0">
+                    <select id="lang-switcher" onchange="switchLanguage(this.value)" class="bg-white text-brand-ink border border-brand-ink/10 rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm focus:outline-none focus:border-brand-orange font-medium shadow-sm flex-shrink-0 max-w-[42vw]">
                         <option value="vi">🇻🇳 Tiếng Việt</option>
                         <option value="en">🇬🇧 English</option>
                         <option value="ko">🇰🇷 한국어</option>
@@ -278,7 +294,7 @@
 
                 <!-- Row 2: Search bar -->
                 <div class="relative">
-                    <svg class="w-4 h-4 text-brand-teal/60 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 text-brand-teal absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
                     </svg>
                     <input
@@ -286,44 +302,46 @@
                         type="text"
                         autocomplete="off"
                         oninput="onSearchInput(this.value)"
-                        class="w-full bg-white border border-black/10 rounded-full pl-11 pr-11 py-2.5 text-sm text-black placeholder-gray-400 focus:outline-none focus:border-brand-teal shadow-sm"
+                        class="w-full bg-white border border-brand-ink/10 rounded-full pl-11 pr-11 py-2.5 text-base sm:text-sm text-brand-ink placeholder-brand-muted/70 focus:outline-none focus:border-brand-orange shadow-sm"
                         placeholder="Tìm món ăn..."
                     />
                     <button
                         id="search-clear-btn"
                         onclick="clearSearch()"
                         aria-label="Xóa tìm kiếm"
-                        class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/10 hover:bg-brand-gold/30 flex items-center justify-center text-gray-600"
+                        class="hidden absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-brand-ink/10 hover:bg-brand-orange/30 flex items-center justify-center text-brand-muted"
                     >
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
-                <p id="search-results-count" class="text-xs text-brand-teal font-medium mt-2 pl-1 min-h-[16px] opacity-0 transition-opacity duration-200"></p>
+                <p id="search-results-count" class="text-xs text-brand-tealDark font-medium mt-2 pl-1 min-h-[16px] opacity-0 transition-opacity duration-200"></p>
             </div>
 
             <!-- Tax Alert Banner -->
-            <div class="glass-panel rounded-xl p-4 mb-8 text-center text-xs md:text-sm text-brand-gold tracking-wide uppercase font-semibold shadow-sm">
-                ⚠️ <span id="tax-warning-text">Giá chưa bao gồm thuế GTGT / Price not included VAT / Unit: VND</span>
+            <div class="glass-panel rounded-xl p-3 sm:p-4 mb-6 text-center text-[11px] sm:text-sm text-brand-orangeDark tracking-wide uppercase font-semibold shadow-sm wrap-anywhere">
+                ⚠️ <span id="tax-warning-text">Giá chưa bao gồm thuế GTGT / Đơn vị: VND</span>
             </div>
 
             <!-- No results state -->
             <div id="no-results" class="hidden no-results-wrap text-center py-16 px-4">
-                <svg class="w-12 h-12 text-brand-teal/30 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-12 h-12 text-brand-teal/40 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
                 </svg>
-                <p id="no-results-title" class="text-black font-serif font-semibold text-lg mb-1">Không tìm thấy món nào</p>
-                <p id="no-results-desc" class="text-sm text-gray-500">Thử tìm với từ khóa khác nhé</p>
+                <p id="no-results-title" class="text-brand-ink font-serif font-semibold text-lg mb-1">Không tìm thấy món nào</p>
+                <p id="no-results-desc" class="text-sm text-brand-muted">Thử tìm với từ khóa khác nhé</p>
             </div>
 
             <!-- Sticky Category Slider Nav -->
-            <div class="sticky top-[150px] z-30 bg-[#F5F5DC]/95 backdrop-blur-sm border-b border-black/5 py-3 mb-8 -mx-4 px-4 overflow-x-auto whitespace-nowrap scrollbar-none flex gap-2 shadow-sm" id="category-nav-slider">
-                <!-- Dynamically populated -->
+            <div id="category-nav-wrap" class="sticky top-[150px] z-30 bg-[#F3EBD4] supports-[backdrop-filter]:bg-[#F3EBD4]/95 backdrop-blur-sm border-b border-brand-orange/10 py-3 mb-8 -mx-4 px-4 sm:-mx-6 sm:px-6 overflow-x-auto scrollbar-none shadow-sm">
+                <div id="category-nav-slider" class="flex gap-2 w-max">
+                    <!-- Dynamically populated -->
+                </div>
             </div>
 
             <!-- Dynamic Menu Grid Layout -->
-            <div id="menu-categories-container" class="space-y-16">
+            <div id="menu-categories-container" class="space-y-12 md:space-y-16">
                 <!-- Dynamically populated categories -->
             </div>
         </section>
@@ -331,70 +349,261 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="relative z-10 w-full bg-[#E8E8CD] border-t border-black/10 py-8 md:py-12 mt-12 text-gray-600 text-sm">
+    <footer class="relative z-10 w-full bg-[#EAE0C4] border-t border-brand-orange/20 py-8 md:py-12 mt-12 text-brand-muted text-sm">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-                <!-- VNA Brand Reference -->
-                <div class="space-y-4">
-                    <h4 class="text-black font-serif font-semibold text-lg tracking-wide uppercase">Hẻm Quán</h4>
-                    <p class="text-xs text-gray-500 max-w-sm leading-relaxed">
+                <!-- Brand -->
+                <div class="space-y-4 min-w-0">
+                    <img src="data:image/png;base64,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" alt="Hẻm Quán" class="w-40 h-auto">
+                    <p class="text-xs text-brand-muted max-w-sm leading-relaxed wrap-anywhere">
                         Established in 2013, Hẻm Quán brings the absolute premium essence of Saigon street food and luxury coastal seafood right to your plate.
                     </p>
-                    <div class="text-xs text-brand-gold font-semibold uppercase tracking-wider">
-                        ★ Premium Seafood & Vietnamese Cuisine
+                    <div class="text-xs text-brand-orange font-semibold uppercase tracking-wider">
+                        ★ Premium Seafood &amp; Vietnamese Cuisine
                     </div>
                 </div>
 
                 <!-- Locations -->
-                <div class="space-y-3">
-                    <h5 class="text-black font-semibold text-xs tracking-wider uppercase text-brand-teal">Hà Nội Locations</h5>
-                    <ul class="space-y-2 text-xs text-gray-600 font-medium">
+                <div class="space-y-3 min-w-0">
+                    <h5 class="font-semibold text-xs tracking-wider uppercase text-brand-tealDark">Hà Nội Locations</h5>
+                    <ul class="space-y-2 text-xs text-brand-ink/80 font-medium">
                         <li class="flex items-start gap-2">
-                            <span class="text-brand-gold">•</span>
-                            <span>96 Chùa Hà, Cầu Giấy</span>
+                            <span class="text-brand-orange">•</span>
+                            <span class="wrap-anywhere">96 Chùa Hà, Cầu Giấy</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <span class="text-brand-gold">•</span>
-                            <span>149-161 Hoàng Cầu, Đống Đa</span>
+                            <span class="text-brand-orange">•</span>
+                            <span class="wrap-anywhere">149-161 Hoàng Cầu, Đống Đa</span>
                         </li>
                         <li class="flex items-start gap-2">
-                            <span class="text-brand-gold">•</span>
-                            <span>92 Vũ Phạm Hàm, Cầu Giấy</span>
+                            <span class="text-brand-orange">•</span>
+                            <span class="wrap-anywhere">92 Vũ Phạm Hàm, Cầu Giấy</span>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Contact & Đà Nẵng -->
-                <div class="space-y-3">
-                    <h5 class="text-black font-semibold text-xs tracking-wider uppercase text-brand-teal">Đà Nẵng & Contact</h5>
-                    <ul class="space-y-2 text-xs text-gray-600 font-medium">
+                <div class="space-y-3 min-w-0">
+                    <h5 class="font-semibold text-xs tracking-wider uppercase text-brand-tealDark">Đà Nẵng &amp; Contact</h5>
+                    <ul class="space-y-2 text-xs text-brand-ink/80 font-medium">
                         <li class="flex items-start gap-2">
-                            <span class="text-brand-gold">•</span>
-                            <span>298 Nguyễn Công Trứ, An Hải</span>
+                            <span class="text-brand-orange">•</span>
+                            <span class="wrap-anywhere">298 Nguyễn Công Trứ, An Hải</span>
                         </li>
                     </ul>
                     <div class="pt-2">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Hotline</p>
-                        <p class="text-black font-bold text-base text-brand-gold">037 695 3563</p>
+                        <p class="text-xs text-brand-muted uppercase tracking-wider font-semibold">Hotline</p>
+                        <a href="tel:0376953563" class="font-bold text-base text-brand-orange hover:text-brand-orangeDark transition-colors">037 695 3563</a>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Website</p>
-                        <a href="https://hemquan.vn" target="_blank" class="text-brand-teal hover:text-brand-gold transition-colors text-sm font-semibold">hemquan.vn</a>
+                        <p class="text-xs text-brand-muted uppercase tracking-wider font-semibold">Website</p>
+                        <a href="https://hemquan.vn" target="_blank" rel="noopener" class="text-brand-tealDark hover:text-brand-orange transition-colors text-sm font-semibold">hemquan.vn</a>
                     </div>
                 </div>
             </div>
 
-            <div class="border-t border-black/10 pt-6 text-center text-xs text-gray-500 flex flex-col sm:flex-row items-center justify-between gap-4 font-medium">
+            <div class="border-t border-brand-ink/10 pt-6 text-center text-xs text-brand-muted flex flex-col sm:flex-row items-center justify-between gap-3 font-medium">
                 <p>&copy; 2013-2025 Hẻm Quán. All rights reserved.</p>
-                <p class="text-gray-500">Designed with absolute premium Vietnamese hospitality standards.</p>
+                <p>Designed with absolute premium Vietnamese hospitality standards.</p>
             </div>
         </div>
     </footer>
 
     <!-- EMBEDDED DATA & CONTROLLER JS -->
     <script>
-        const menuData = [{"names": {"vi": "MÓN ĂN SÁNG", "en": "Breakfast", "ko": "아침 식사 메뉴", "zh": "早餐菜单", "ru": "Завтраки"}, "items": [{"names": {"vi": "Phở bò", "en": "Beef Pho", "ko": "소고기 쌀국수", "zh": "牛肉河粉", "ru": "Фо-бо"}, "price": "45.000"}, {"names": {"vi": "Bún bò Nam Bộ", "en": "Vietnamese Southern-Style Beef Vermicelli", "ko": "베트남 남부식 소고기 쌀국수", "zh": "越南南部牛肉米线", "ru": "Вьетнамская рисовая лапша с говядиной по-южному"}, "price": "40.000"}, {"names": {"vi": "Xôi", "en": "Sticky Rice", "ko": "찹쌀밥", "zh": "糯米饭", "ru": "Клейкий рис"}, "price": "40.000"}, {"names": {"vi": "Bánh cuốn Thanh Trì", "en": "Thanh Tri Steamed Rice Rolls", "ko": "탄찌 쌀롤", "zh": "青池蒸米卷", "ru": "Бань куон Тхань Чи"}, "price": "85.000"}, {"names": {"vi": "Bánh mì", "en": "Vietnamese Banh Mi", "ko": "베트남 반미", "zh": "越南法棍三明治", "ru": "Bánh mì вьетнамский"}, "price": "35.000"}, {"names": {"vi": "Bánh mì sizzling", "en": "Vietnamese Sizzling Pan Banh Mi", "ko": "베트남식 철판 Banh Mi", "zh": "越南铁板 Banh Mi", "ru": "Вьетнамский Banh Mi на горячей сковороде"}, "price": "105.000"}, {"names": {"vi": "Bún chả Hà Nội", "en": "Hanoi Grilled Pork with Vermicelli", "ko": "하노이 분짜", "zh": "河内烤肉米线", "ru": "Бун ча Ханоя"}, "price": "50.000"}, {"names": {"vi": "Bún đậu mắm tôm", "en": "Rice Vermicelli with Fried Tofu", "ko": "두부와 쌀국수", "zh": "豆腐米线", "ru": "Бун дау с креветочной пастой"}, "price": "65.000"}, {"names": {"vi": "Cơm tấm Sài Gòn", "en": "Saigon Broken Rice", "ko": "사이공 껌땀", "zh": "西贡碎米饭", "ru": "Ком там Сайгона"}, "price": "85.000"}]}, {"names": {"vi": "SALAD", "en": "Salad", "ko": "샐러드", "zh": "沙拉", "ru": "Салаты"}, "items": [{"names": {"vi": "Salad rong biển trứng cua", "en": "Seaweed salad with crab roe", "ko": "해초 게알 샐러드", "zh": "海藻蟹籽沙拉", "ru": "Салат из водорослей с икрой краба"}, "price": "135.000"}, {"names": {"vi": "Gỏi sứa", "en": "Jellyfish salad", "ko": "해파리 샐러드", "zh": "海蜇沙拉", "ru": "Салат с медузой"}, "price": "90.000"}, {"names": {"vi": "Gỏi bò rau càng cua", "en": "Beef & wild watercress salad", "ko": "소고기 깡꾸아 샐러드", "zh": "假蒌叶牛肉沙拉", "ru": "Салат с говядиной и зеленью"}, "price": "120.000"}, {"names": {"vi": "Salad rau xanh bò Kobe", "en": "Kobe Beef Green Salad", "ko": "고베 소고기 그린 샐러드", "zh": "神户牛肉田园沙拉", "ru": "Салат с говядиной Кобе"}, "price": "275.000"}, {"names": {"vi": "Salad rau xanh", "en": "Garden green salad", "ko": "그린 샐러드", "zh": "时蔬沙拉", "ru": "Салат из зелени"}, "price": "85.000"}, {"names": {"vi": "Salad lườn ngỗng", "en": "Smoked goose breast salad", "ko": "훈제 거위 가슴살 샐러드", "zh": "烟熏鹅胸沙拉", "ru": "Салат с филе гуся"}, "price": "120.000"}, {"names": {"vi": "Salad cá hồi hoa quả", "en": "Salmon Fruit Salad", "ko": "연어 과일 샐러드", "zh": "三文鱼水果沙拉", "ru": "Салат с фруктами и лососем"}, "price": "265.000"}]}, {"names": {"vi": "KHAI VỊ", "en": "Appetizers", "ko": "애피타이저", "zh": "开胃菜", "ru": "Закуски"}, "items": [{"names": {"vi": "Đậu hũ hải sản khói lửa", "en": "Seafood Tofu", "ko": "해물 두부", "zh": "海鲜豆腐", "ru": "Тофу с морепродуктами"}, "price": "185.000"}, {"names": {"vi": "Đậu hũ sốt trứng muối", "en": "Tofu with salted egg sauce", "ko": "짠 계란노른자 소스 두부", "zh": "咸蛋黄酱豆腐", "ru": "Тофу с соусом из солёного яйца"}, "price": "95.000"}, {"names": {"vi": "Đậu hũ chà bông trứng bắc thảo", "en": "Silken tofu with pork floss and century egg", "ko": "피단 두부", "zh": "皮蛋豆腐", "ru": "Тофу с мясной стружкой и столетним яйцом"}, "price": "155.000"}, {"names": {"vi": "Khoai tây chiên", "en": "French fries", "ko": "감자튀김", "zh": "薯条", "ru": "Картофель фри"}, "price": "50.000"}, {"names": {"vi": "Ba chỉ then len", "en": "Then Len pork belly", "ko": "텐렌 잎을 곁들인 삼겹살", "zh": "五花肉配Then Len香叶", "ru": "Свинина Тхэн Лен"}, "price": "145.000"}, {"names": {"vi": "Ba chỉ ngâm mắm", "en": "Pork belly in fish sauce", "ko": "느억맘에 절인 삼겹살", "zh": "鱼露腌五花肉", "ru": "Свинина в рыбном соусе"}, "price": "145.000"}, {"names": {"vi": "Bò một nắng muối kiến", "en": "Sun-dried grilled beef with ant salt", "ko": "개미소금 소고기 육포", "zh": "蚂蚁盐牛肉干", "ru": "Вяленая говядина с муравьиной солью"}, "price": "145.000"}, {"names": {"vi": "Bắp bò Tứ Xuyên", "en": "Sichuan Beef Shank", "ko": "사천식 소고기 사태", "zh": "四川牛腱", "ru": "Говядина по-сычуаньски"}, "price": "125.000"}, {"names": {"vi": "Chả mực Hạ Long", "en": "Ha Long Style Squid Cakes", "ko": "하롱식 오징어 완자", "zh": "下龙风味墨鱼饼", "ru": "Кальмарные котлеты Халонга"}, "price": "205.000"}, {"names": {"vi": "Chả mỡ", "en": "Vietnamese pork patty", "ko": "베트남식 돼지고기 완자튀김", "zh": "越式炸肉饼", "ru": "Свиной паштет на гриле"}, "price": "165.000"}, {"names": {"vi": "Chả cốm Hà Nội", "en": "Hanoi young green rice pork patties", "ko": "하노이식 풋쌀 돼지고기 완자", "zh": "河内绿米猪肉饼", "ru": "Ча ком Ханоя"}, "price": "115.000"}, {"names": {"vi": "Chả cá Thăng Long", "en": "Thang Long Grilled Fish", "ko": "탕롱 생선구이", "zh": "升龙烤鱼", "ru": "Ча ка Тханг Лонг"}, "price": "230.000"}]}, {"names": {"vi": "MÓN NEM", "en": "Vietnamese Spring Rolls", "ko": "베트남식 스프링롤", "zh": "越南春卷", "ru": "Немы"}, "items": [{"names": {"vi": "Nem rán Hà Nội (4 cái)", "en": "Ha Noi fried spring rolls (4 pcs)", "ko": "하노이식 튀김 스프링롤 (4개)", "zh": "河内炸春卷 (4个)", "ru": "Ханойские жареные немы (4 шт.)"}, "price": "75.000"}, {"names": {"vi": "Nem rau (5 cái)", "en": "Vegetable spring rolls (5 pcs)", "ko": "채소 스프링롤 (5개)", "zh": "蔬菜春卷 (5个)", "ru": "Овощные немы (5 шт.)"}, "price": "75.000"}, {"names": {"vi": "Chả ram tôm đất", "en": "Crispy shrimp rice paper rolls", "ko": "새우 짜조", "zh": "越式炸虾春卷", "ru": "Хрустящие рулетики с креветками"}, "price": "95.000"}, {"names": {"vi": "Vằn thắn tôm thịt chiên (5 cái)", "en": "Crispy Fried Shrimp & Pork Wontons (5 pcs)", "ko": "새우·돼지고기 튀김 완탕 (5개)", "zh": "香炸鲜虾猪肉馄饨(5个)", "ru": "Жареные вонтоны с креветками и свининой (5 шт.)"}, "price": "95.000"}, {"names": {"vi": "Set nem rán", "en": "Fried spring roll set", "ko": "튀김 롤 세트", "zh": "炸春卷套餐", "ru": "Сет жареных немов"}, "price": "195.000"}, {"names": {"vi": "Set nem rán + trà", "en": "Fried spring roll set + tropical fruit tea", "ko": "튀김 롤 세트 + 열대 과일차", "zh": "炸春卷套餐 + 水果茶", "ru": "Сет немов + чай"}, "price": "285.000"}, {"names": {"vi": "Vằn thắn tôm thịt nước (5 cái)", "en": "Shrimp & Pork Wonton Soup (5 pcs)", "ko": "새우·돼지고기 완탕국 (5개)", "zh": "鲜虾猪肉馄饨汤(5个)", "ru": "Вонтоны в бульоне (5 шт.)"}, "price": "95.000"}]}, {"names": {"vi": "MÓN CUỐN", "en": "Vietnamese Fresh Rolls", "ko": "베트남식 생롤", "zh": "越南鲜卷", "ru": "Вьетнамские рулетики"}, "items": [{"names": {"vi": "Phở cuốn bò (4 cái)", "en": "Beef pho rolls (4 pcs)", "ko": "하노이 소고기 쌀국수롤 (4개)", "zh": "河内牛肉河粉卷 (4个)", "ru": "Рисовые рулетики с говядиной (4 шт.)"}, "price": "88.000"}, {"names": {"vi": "Cuốn tôm thịt (4 cái)", "en": "Fresh shrimp & pork spring rolls (4 pcs)", "ko": "새우·돼지고기 월남쌈 (4개)", "zh": "鲜虾猪肉卷(4个)", "ru": "Рулетики с креветками и свининой (4 шт.)"}, "price": "99.000"}, {"names": {"vi": "Nem chua và bì cuốn đu đủ (4 cái)", "en": "Fermented pork & pork skin rolls with papaya (4 pcs)", "ko": "발효 돼지고기·돼지껍질 파파야 말이 (4개)", "zh": "发酵猪肉配猪皮和青木瓜(4个)", "ru": "Рулетики с немом (4 шт.)"}, "price": "72.000"}, {"names": {"vi": "Set cuốn", "en": "Vietnamese roll set", "ko": "베트남 롤 세트", "zh": "越式卷拼盘套餐", "ru": "Сет рулетиков"}, "price": "185.000"}, {"names": {"vi": "Set cuốn + trà", "en": "Roll set + tropical fruit tea", "ko": "롤 세트 + 열대 과일차", "zh": "卷拼盘 + 水果茶", "ru": "Сет рулетиков + чай"}, "price": "275.000"}, {"names": {"vi": "Bò cuốn mỡ chài", "en": "Grilled beef wrapped in caul fat", "ko": "지방막 소고기말이", "zh": "网油牛肉卷", "ru": "Говядина в сетке из свиного жира"}, "price": "165.000"}]}, {"names": {"vi": "BÁNH MIỀN TRUNG", "en": "Traditional Central Vietnamese Cakes", "ko": "베트남 중부 전통 떡", "zh": "越南中部传统糕点", "ru": "Блюда из Центрального Вьетнама"}, "items": [{"names": {"vi": "Set bánh (2 Nậm, 2 Lọc, 2 Ram ít)", "en": "Vietnamese traditional cake set", "ko": "베트남 전통 떡 세트", "zh": "越南传统糕点套餐", "ru": "Сет вьетнамских пирожков"}, "price": "85.000"}, {"names": {"vi": "Bánh xèo miền Trung (3 cái)", "en": "Central Vietnamese crispy pancake (3 pcs)", "ko": "중부식 반쎄오 (3개)", "zh": "越南中部煎饼(3个)", "ru": "Бань сео (3 шт.)"}, "price": "85.000"}, {"names": {"vi": "Bánh khọt (6 cái)", "en": "Mini savory pancakes (6 pcs)", "ko": "반콧 (6개)", "zh": "迷你煎饼盏 (6个)", "ru": "Бань кот (6 шт.)"}, "price": "85.000"}, {"names": {"vi": "Bánh nậm (5 cái)", "en": "Vietnamese Steamed Flat Rice Cake (5 pcs)", "ko": "베트남 반남 (5개)", "zh": "越南南饼(5个)", "ru": "Бань нам (5 шт.)"}, "price": "65.000"}, {"names": {"vi": "Bánh bột lọc (5 cái)", "en": "Vietnamese Tapioca Dumplings (5 pcs)", "ko": "베트남 반봇록 (5개)", "zh": "越南木薯粉水晶饺(5个)", "ru": "Бань бот лок (5 шт.)"}, "price": "65.000"}, {"names": {"vi": "Bánh ram ít (5 cái)", "en": "Vietnamese Crispy Rice Dumplings (5 pcs)", "ko": "베트남 반람잇 (5개)", "zh": "越南炸糯米饼(5个)", "ru": "Бань рам ит (5 шт.)"}, "price": "65.000"}]}, {"names": {"vi": "MÓN CHIM CÂU VÀ GÀ HẦM", "en": "Pigeon & Stewed Chicken", "ko": "비둘기 & 닭찜", "zh": "乳鸽 & 炖鸡", "ru": "Голуби и тушёная курица"}, "items": [{"names": {"vi": "Chim câu quay da giòn", "en": "Crispy Roasted Squab", "ko": "바삭한 비둘기 구이", "zh": "脆皮乳鸽", "ru": "Жареный голубь с хрустящей кожей"}, "price": "165.000/con"}, {"names": {"vi": "Chim câu xào cà", "en": "Stir-fried Squab with Pickled Eggplant", "ko": "가지절임을 곁들인 비둘기 볶음", "zh": "乳鸽炒腌茄子", "ru": "Голубь с баклажанами"}, "price": "185.000"}, {"names": {"vi": "Chim câu nhồi cốm hạt sen", "en": "Squab Stuffed with Green Rice & Lotus Seeds", "ko": "연꽃씨와 풋찹쌀을 채운 비둘기", "zh": "莲子青稞酿乳鸽", "ru": "Голубь, фаршированный зелёным рисом и лотосом"}, "price": "265.000"}, {"names": {"vi": "Gà hầm bí đỏ (1/2 con)", "en": "Stewed Chicken with Pumpkin", "ko": "단호박을 넣어 푹 끓인 닭고기", "zh": "南瓜炖鸡", "ru": "Курица, тушёная с тыквой"}, "price": "285.000"}]}, {"names": {"vi": "MÓN GÀ", "en": "Chicken", "ko": "닭고기", "zh": "鸡肉", "ru": "Блюда из курицы"}, "items": [{"names": {"vi": "Đùi gà chiên xù", "en": "Crispy Fried Chicken Drumsticks", "ko": "바삭한 닭다리 튀김", "zh": "香酥炸鸡腿", "ru": "Куриные ножки в хрустящей панировке"}, "price": "150.000"}, {"names": {"vi": "Gà cuộn lá dứa", "en": "Chicken wrapped in pandan leaves", "ko": "판단잎으로 감싼 닭튀김", "zh": "香兰叶鸡卷", "ru": "Курица с листьями пандана"}, "price": "145.000"}, {"names": {"vi": "Gà chiên mắm", "en": "Fried Chicken with Fish Sauce", "ko": "피시소스 치킨 튀김", "zh": "鱼露炸鸡", "ru": "Курица в рыбном соусе"}, "price": "145.000"}, {"names": {"vi": "Gà nướng sả cây", "en": "Lemongrass grilled chicken", "ko": "레몬그라스 치킨구이", "zh": "香茅烤鸡", "ru": "Курица на гриле с лемонграссом"}, "price": "150.000"}, {"names": {"vi": "Gà xào lá quế hạt điều", "en": "Stir-fried chicken with basil & cashews", "ko": "바질 캐슈넛 치킨볶음", "zh": "罗勒腰果炒鸡", "ru": "Курица с basil и cashews"}, "price": "155.000"}]}, {"names": {"vi": "MÓN BÒ", "en": "Beef", "ko": "소고기", "zh": "牛肉", "ru": "Блюда из говядины"}, "items": [{"names": {"vi": "Bò xào khoai tây chiên", "en": "Stir-fried beef with french fries", "ko": "감자튀김 소고기 볶음", "zh": "薯条炒牛肉", "ru": "Говядина с жареным картофелем"}, "price": "160.000"}, {"names": {"vi": "Bò xào nụ bí", "en": "Stir-fried beef with pumpkin shoots", "ko": "호박순 소고기 볶음", "zh": "南瓜苗炒牛肉", "ru": "Говядина с цветками тыквы"}, "price": "165.000"}, {"names": {"vi": "Bò sốt tiêu đen", "en": "Beef with Black Pepper Sauce", "ko": "블랙페퍼 소스 소고기", "zh": "黑椒牛肉", "ru": "Говядина в соусе из чёрного перца"}, "price": "230.000"}, {"names": {"vi": "Bò lúc lắc", "en": "Shaking beef", "ko": "흔들이 소고기 (보룩락)", "zh": "摇摇牛肉", "ru": "Бифштекс «Лук лак»"}, "price": "230.000"}]}, {"names": {"vi": "MÓN BÊ", "en": "Veal", "ko": "송아지고기", "zh": "小牛肉", "ru": "Блюда из телятины"}, "items": [{"names": {"vi": "Bê xào sả ớt", "en": "Stir-fried Veal with Lemongrass & Chili", "ko": "레몬그라스와 고추를 넣어 볶은 송아지고기", "zh": "香茅辣椒炒小牛肉", "ru": "Телятина с лемонграссом и чили"}, "price": "195.000"}, {"names": {"vi": "Bê tái tương", "en": "Rare Veal with Fermented Soybean Sauce", "ko": "된장 소스를 곁들인 레어 송아지고기", "zh": "酱拌生嫩小牛肉", "ru": "Телятина с соусом"}, "price": "225.000"}, {"names": {"vi": "Bê chao bản gang", "en": "Cast-Iron Pan Seared Veal", "ko": "무쇠 팬에 구운 송아지고기", "zh": "铁板香煎小牛肉", "ru": "Жареная телятина на чугунной сковороде"}, "price": "235.000"}, {"names": {"vi": "Bê hấp đá núi lửa", "en": "Volcanic Stone-Steamed Veal", "ko": "화산석으로 찐 송아지고기", "zh": "火山石蒸小牛肉", "ru": "Телятина на вулканическом камне"}, "price": "255.000"}]}, {"names": {"vi": "MÓN HEO", "en": "Pork", "ko": "돼지고기", "zh": "猪肉", "ru": "Блюда из свинины"}, "items": [{"names": {"vi": "Má heo tắm nắng", "en": "Sun-dried pork cheeks", "ko": "선드라이 돼지볼살", "zh": "风干猪颊肉", "ru": "Свиные щёчки вяленые на солнце"}, "price": "145.000"}, {"names": {"vi": "Má heo nướng", "en": "Grilled pork cheeks", "ko": "돼지볼살 구이", "zh": "烤猪颊肉", "ru": "Жареные свиные щёчки"}, "price": "145.000"}, {"names": {"vi": "Thăn heo chiên xù phô mai", "en": "Cheese-stuffed breaded pork loin", "ko": "치즈 스터프드 돈까스", "zh": "芝士夹心炸猪排", "ru": "Хрустящая свиная вырезка с сыром"}, "price": "155.000"}, {"names": {"vi": "Vai heo chiên xù", "en": "Crispy Fried Pork Shoulder", "ko": "바삭한 돼지 목살 튀김", "zh": "香酥炸猪肩肉", "ru": "Свиная лопатка в хрустящей панировке"}, "price": "150.000"}, {"names": {"vi": "Sườn heo nướng BBQ", "en": "BBQ Grilled Pork Ribs", "ko": "BBQ 돼지갈비 구이", "zh": "BBQ烤猪排骨", "ru": "Свиные рёбра BBQ"}, "price": "235.000"}, {"names": {"vi": "Sườn heo chiên tỏi", "en": "Garlic fried pork ribs", "ko": "마늘튀김 폭립", "zh": "蒜香炸排骨", "ru": "Свиные рёбра с чесноком"}, "price": "235.000"}, {"names": {"vi": "Sườn heo nướng tảng", "en": "Whole Rack of Grilled Pork Ribs", "ko": "통돼지갈비 구이", "zh": "整排烤猪肋排", "ru": "Запечённые свиные рёбра порцией"}, "price": "480.000"}]}, {"names": {"vi": "MÓN ẾCH VÀ LƯƠN", "en": "Frog & Eel", "ko": "개구리 & 장어", "zh": "田鸡 & 鳝鱼", "ru": "Блюда из лягушки и угря"}, "items": [{"names": {"vi": "Ếch chiên mắm", "en": "Fried Frog with Fish Sauce", "ko": "피시소스를 곁들인 개구리 튀김", "zh": "鱼露炸田鸡", "ru": "Лягушка в рыбном соусе"}, "price": "150.000"}, {"names": {"vi": "Ếch rang muối", "en": "Salt-Roasted Frog", "ko": "소금 볶음 개구리", "zh": "椒盐田鸡", "ru": "Лягушка с солью"}, "price": "150.000"}, {"names": {"vi": "Ếch um bầu", "en": "Vietnamese Braised Frog with Bottle Gourd", "ko": "애호박을 넣은 개구리 조림", "zh": "蒲瓜焖田鸡", "ru": "Лягушка с тыквой"}, "price": "185.000"}, {"names": {"vi": "Lươn xào xả ớt", "en": "Stir-fried Eel with Lemongrass & Chili", "ko": "레몬그라스와 고추를 곁들인 장어볶음", "zh": "香茅辣椒炒鳝鱼", "ru": "Угорь с лемонграссом и чили"}, "price": "165.000"}, {"names": {"vi": "Lươn om chuối", "en": "Braised Eel with Green Banana", "ko": "풋바나나를 넣은 장어조림", "zh": "青香蕉焖鳝鱼", "ru": "Угорь с бананом"}, "price": "285.000"}]}, {"names": {"vi": "MỰC ỐNG VÀ MỰC MỘT NẮNG", "en": "Squid & Semi-Dried Squid", "ko": "오징어 & 반건조 오징어", "zh": "鲜鱿鱼和一夜干鱿鱼", "ru": "Кальмары"}, "items": [{"names": {"vi": "Mực ống chiên xù", "en": "Crispy Fried Squid", "ko": "바삭하게 튀긴 오징어", "zh": "香酥炸鱿鱼", "ru": "Кальмары в хрустящей панировке"}, "price": "230.000"}, {"names": {"vi": "Mực ống chiên bơ tỏi", "en": "Fried Squid with Garlic Butter", "ko": "갈릭 버터 오징어", "zh": "蒜香黄油鱿鱼", "ru": "Кальмары с чесночным маслом"}, "price": "230.000"}, {"names": {"vi": "Mực một nắng chiên mắm", "en": "Sun-Dried Squid Fried with Fish Sauce", "ko": "피시소스로 볶은 반건조 오징어", "zh": "鱼露香煎一晒鱿鱼", "ru": "Вяленые кальмары в рыбном соусе"}, "price": "375.000"}, {"names": {"vi": "Mực một nắng nướng mọi", "en": "Grilled Sun-Dried Squid", "ko": "직화로 구운 반건조 오징어", "zh": "原味烤一晒鱿鱼", "ru": "Вяленые кальмары на гриле"}, "price": "375.000"}, {"names": {"vi": "Mực một nắng nướng sa tế", "en": "Sun-Dried Squid Grilled with Satay Sauce", "ko": "사테소스를 발라 구운 반건조 오징어", "zh": "沙爹酱烤一晒鱿鱼", "ru": "Вяленые кальмары с сатэ на гриле"}, "price": "375.000"}]}, {"names": {"vi": "SASHIMI", "en": "SASHIMI", "ko": "SASHIMI", "zh": "SASHIMI", "ru": "SASHIMI"}, "items": [{"names": {"vi": "Sashimi tổng hợp", "en": "Assorted Sashimi", "ko": "모둠 사시미", "zh": "刺身拼盘", "ru": "Ассорти сашими"}, "price": "325.000"}, {"names": {"vi": "Sashimi cá hồi", "en": "Salmon Sashimi", "ko": "연어 사시미", "zh": "三文鱼刺身", "ru": "Сашими из лосося"}, "price": "165.000"}, {"names": {"vi": "Sashimi cá trích vàng", "en": "Golden Herring Sashimi", "ko": "황금 청어알", "zh": "黄金鱼籽鲱鱼", "ru": "Сашими из сельди"}, "price": "165.000"}, {"names": {"vi": "Sashimi cá trích đỏ", "en": "Red Herring Sashimi", "ko": "붉은 청어알", "zh": "红鱼籽鲱鱼", "ru": "Сашими из красной сельди"}, "price": "165.000"}]}, {"names": {"vi": "HẢI SẢN", "en": "Seafood", "ko": "해산물", "zh": "海鲜", "ru": "Морепродукты"}, "items": [{"names": {"vi": "Cá chim biển / Pomfret", "en": "병어", "ko": "鲳鱼", "zh": "Морской помфрет", "ru": "Морской помфрет"}, "price": "600.000/kg (Hấp xì dầu / Chiên giòn / Canh chua / Lẩu)"}, {"names": {"vi": "Cá bơn Hàn Quốc / Korean Halibut", "en": "한국산 광어", "ko": "韩国比目鱼", "zh": "Корейская камбала", "ru": "Корейская камбала"}, "price": "1.450.000/kg (Sashimi / Hấp xì dầu / Nướng muối ớt)"}, {"names": {"vi": "Cá chình / Canger Eel", "en": "장어", "ko": "鳗鱼", "zh": "Угорь", "ru": "Угорь"}, "price": "350.000 (Hấp miến / Nướng sốt xì dầu)"}, {"names": {"vi": "Cá mú / Grouper", "en": "바리", "ko": "石斑鱼", "zh": "Групер", "ru": "Групер"}, "price": "650.000/kg (Hấp xì dầu / Chiên giòn / Sashimi)"}, {"names": {"vi": "Sò bung / Venus Clam", "en": "백합조개", "ko": "花蛤", "zh": "Венерка", "ru": "Венерка"}, "price": "450.000/kg"}, {"names": {"vi": "Sò dương / Surf Clam", "en": "북방조개", "ko": "北寄贝", "zh": "Серфклем", "ru": "Серфклем"}, "price": "350.000/kg"}, {"names": {"vi": "Sò mía / Razor Clam", "en": "북방조개", "ko": "蛏子", "zh": "Морской нож", "ru": "Морской нож"}, "price": "300.000/kg"}, {"names": {"vi": "Sò lông xanh / Hairy Clam", "en": "털조개", "ko": "毛蚶", "zh": "Волосатая ракушка", "ru": "Волосатая ракушка"}, "price": "220.000/kg"}, {"names": {"vi": "Sò méo / Ark Clam", "en": "피조개", "ko": "赤贝", "zh": "Моллюск", "ru": "Моллюск"}, "price": "200.000/kg"}, {"names": {"vi": "Sò mai / Comb Pen Shell", "en": "창조개", "ko": "海月贝", "zh": "Морской гребешок", "ru": "Морской гребешок"}, "price": "110.000/con"}, {"names": {"vi": "Nghêu đen / Black Clam", "en": "검은조개", "ko": "黑蛤蜊", "zh": "Чёрные моллюски", "ru": "Чёрные моллюски"}, "price": "300.000/kg"}, {"names": {"vi": "Chíp chíp / Small Wedge Clam", "en": "비단조개", "ko": "细脂蛤", "zh": "Клемы", "ru": "Клемы"}, "price": "250.000/kg"}, {"names": {"vi": "Vẹm xanh / Green-lipped Mussel", "en": "초록입홍합", "ko": "翡翠贻贝", "zh": "Мидии", "ru": "Мидии"}, "price": "220.000/kg"}, {"names": {"vi": "Hàu / Oyster", "en": "굴", "ko": "牡蛎", "zh": "Устрица", "ru": "Устрица"}, "price": "170.000/kg"}, {"names": {"vi": "Ốc hương / Sweet Snail", "en": "바빌로니아 소라", "ko": "香螺", "zh": "Морские улитки", "ru": "Морские улитки"}, "price": "690.000/kg"}, {"names": {"vi": "Ốc gai / Spiny Murex", "en": "뿔소라", "ko": "刺螺", "zh": "Улитка с шипами", "ru": "Улитка с шипами"}, "price": "550.000/kg"}, {"names": {"vi": "Bề bề / Mantis Shrimp", "en": "갯가재", "ko": "皮皮虾", "zh": "Креветка-богомол", "ru": "Креветка-богомол"}, "price": "1.950.000/kg"}, {"names": {"vi": "Tôm sú / Tiger Prawn", "en": "블랙타이거 새우", "ko": "黑虎虾", "zh": "Тигровая креветка", "ru": "Тигровая креветка"}, "price": "900.000/kg"}, {"names": {"vi": "Tôm mũ ni / Slipper Lobster", "en": "매미새우", "ko": "琵琶虾", "zh": "Лобстер-тапочка", "ru": "Лобстер-тапочка"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Cua bể thịt / Meaty Mud Crab", "en": "수꽃게", "ko": "肉蟹", "zh": "Морской краб", "ru": "Морской краб"}, "price": "950.000/kg"}, {"names": {"vi": "Cua bể gạch / Female Mud Crab with Roe", "en": "암꽃게 알배기", "ko": "膏蟹", "zh": "Краб с икрой", "ru": "Краб с икрой"}, "price": "1.050.000/kg"}, {"names": {"vi": "Ghẹ / Blue Swimming Crab", "en": "꽃게", "ko": "花蟹", "zh": "Краб-плавунец", "ru": "Краб-плавунец"}, "price": "1.150.000/kg"}, {"names": {"vi": "Cua hoàng đế / King Crab", "en": "킹크랩", "ko": "帝王蟹", "zh": "Камчатский краб", "ru": "Камчатский краб"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Bào ngư / Abalone", "en": "전복", "ko": "鲍鱼", "zh": "Морское ушко", "ru": "Морское ушко"}, "price": "1.250.000/kg"}, {"names": {"vi": "Mực lá / Cuttlefish", "en": "갑오징어", "ko": "墨鱼", "zh": "Каракатица", "ru": "Каракатица"}, "price": "800.000/kg"}, {"names": {"vi": "Mực trứng / Egg Squid", "en": "알오징어", "ko": "籽乌贼", "zh": "Кальмар с икрой", "ru": "Кальмар с икрой"}, "price": "700.000/kg"}, {"names": {"vi": "Tôm hùm xanh / Green Spiny Lobster", "en": "청색가시가재", "ko": "青龙虾", "zh": "Синий лобстер", "ru": "Синий лобстер"}, "price": "1.900.000/kg"}, {"names": {"vi": "Tôm hùm bông / Ornate Spiny Lobster", "en": "꽃무늬가시가재", "ko": "锦绣龙虾", "zh": "Лобстер с цветным панцирем", "ru": "Лобстер с цветным панцирем"}, "price": "2.450.000/kg"}, {"names": {"vi": "Tôm hùm Alaska / Alaska Lobster", "en": "알래스카 랍스터", "ko": "阿拉斯加龙虾", "zh": "Аляскинский лобстер", "ru": "Аляскинский лобстер"}, "price": "2.250.000/kg"}]}, {"names": {"vi": "LẨU", "en": "Hotpot", "ko": "전골", "zh": "火锅", "ru": "Хотпот"}, "items": [{"names": {"vi": "Lẩu Thái (hải sản tự chọn)", "en": "Thai Hot Pot (Choose of Seafood)", "ko": "태국식 전골 (해산물 선택)", "zh": "泰式火锅（海鲜自选)", "ru": "Тайский хотпот"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Lẩu chua cay (hải sản tự chọn)", "en": "Spicy & Sour Hot Pot (Choose of Seafood)", "ko": "매콤새콤 전골", "zh": "酸辣火锅（海鲜自选）", "ru": "Кисло-острый хотпот"}, "price": "Theo thời giá/MP"}, {"names": {"vi": "Lẩu riêu cua bắp bò", "en": "Crab Paste Hot Pot with Beef Shank", "ko": "게살 된장 전골과 소고기 사태", "zh": "蟹膏牛腱海鲜火锅", "ru": "Суп с крабом и говяжьей голяшкой"}, "price": "420.000"}]}, {"names": {"vi": "CƠM CANH", "en": "Home-Style Meals", "ko": "가정식", "zh": "家常菜", "ru": "Домашние блюда"}, "items": [{"names": {"vi": "Cơm trắng", "en": "Steamed Rice", "ko": "공기밥", "zh": "白米饭", "ru": "Белый рис"}, "price": "25.000"}, {"names": {"vi": "Rau muống xào tỏi", "en": "Stir-Fried Water Spinach with Garlic", "ko": "마늘 공심채 볶음", "zh": "蒜蓉空心菜", "ru": "Жареный водяной шпинат с чесноком"}, "price": "50.000"}, {"names": {"vi": "Mùng tơi xào tỏi", "en": "Stir-Fried Malabar Spinach with Garlic", "ko": "마늘 말라바르시금치 볶음", "zh": "蒜蓉木耳菜", "ru": "Жареный малабарский шпинат с чесноком"}, "price": "50.000"}, {"names": {"vi": "Nụ bí xào tỏi", "en": "Stir-Fried Squash Shoots with Garlic", "ko": "마늘 호박순 볶음", "zh": "蒜蓉炒南瓜苗", "ru": "Жареные цветочные бутоны тыквы с чесноком"}, "price": "70.000"}, {"names": {"vi": "Trứng rán", "en": "Fried Egg", "ko": "계란후라이", "zh": "煎鸡蛋", "ru": "Жареные яйца"}, "price": "50.000"}, {"names": {"vi": "Ba chỉ rang cháy cạnh", "en": "Crispy Caramelized Pork Belly", "ko": "바삭하게 볶은 삼겹살", "zh": "香煎五花肉", "ru": "Жареная свиная грудинка"}, "price": "125.000"}, {"names": {"vi": "Cơm rang hải sản", "en": "Seafood Fried Rice", "ko": "해물볶음밥", "zh": "海鲜炒饭", "ru": "Жареный рис с морепродуктами"}, "price": "95.000"}, {"names": {"vi": "Mỳ xào hải sản", "en": "Stir-Fried Seafood Noodles", "ko": "해물볶음면", "zh": "海鲜炒面", "ru": "Жареная лапша с морепродуктами"}, "price": "95.000"}, {"names": {"vi": "Miến xào hải sản", "en": "Stir-Fried Seafood Glass Noodles", "ko": "해물 잡채", "zh": "海鲜炒粉丝", "ru": "Жареная стеклянная лапша с морепродуктами"}, "price": "115.000"}, {"names": {"vi": "Cơm chiên cá hồi", "en": "Salmon Fried Rice", "ko": "연어 볶음밥", "zh": "三文鱼炒饭", "ru": "Жареный рис с лососем"}, "price": "115.000"}, {"names": {"vi": "Bò xào khoai tây", "en": "Stir-Fried Beef with French Fries", "ko": "감자튀김 소고기 볶음", "zh": "薯条炒牛肉", "ru": "Говядина с картофелем"}, "price": "160.000"}, {"names": {"vi": "Tôm mực xào dứa", "en": "Stir-Fried Shrimp & Squid with Pineapple", "ko": "파인애플 새우·오징어 볶음", "zh": "菠萝炒虾仁鱿鱼", "ru": "Жареные креветки и кальмары с ананасом"}, "price": "230.000"}]}, {"names": {"vi": "ĐỒ UỐNG", "en": "Beverages", "ko": "음료", "zh": "饮料", "ru": "Напитки"}, "items": [{"names": {"vi": "Bình trà hoa quả nhiệt đới", "en": "Tropical Fruit Tea Pot", "ko": "열대과일 차 주전자", "zh": "热带水果茶壶", "ru": "Кувшин с тропическим фруктовым чаем"}, "price": "95.000"}, {"names": {"vi": "Trà bí đao", "en": "Winter Melon Tea", "ko": "동과차", "zh": "冬瓜茶", "ru": "Чай из зимней дыни"}, "price": "25.000"}, {"names": {"vi": "Nước sấu đá", "en": "Iced Dracontomelon Drink", "ko": "아이스 사우 열매 음료", "zh": "冰镇越南酸果饮", "ru": "Напиток из плодов драцени с льдом"}, "price": "25.000"}, {"names": {"vi": "Cam tươi", "en": "Orange juice", "ko": "오렌지 주스", "zh": "鲜榨橙汁", "ru": "Свежевыжатый апельсиновый сок"}, "price": "35.000"}, {"names": {"vi": "Dưa hấu", "en": "Watermelon juice", "ko": "수박 주스", "zh": "鲜榨西瓜汁", "ru": "Арбузный сок"}, "price": "30.000"}, {"names": {"vi": "Dứa (Thơm)", "en": "Pineapple juice", "ko": "파인애플 주스", "zh": "鲜榨菠萝汁", "ru": "Ананасовый сок"}, "price": "30.000"}, {"names": {"vi": "Cà rốt", "en": "Carrot juice", "ko": "당근 주스", "zh": "鲜榨胡萝卜汁", "ru": "Морковный сок"}, "price": "30.000"}, {"names": {"vi": "Chanh leo", "en": "Passion fruit juice", "ko": "패션프루트 주스", "zh": "鲜榨百香果汁", "ru": "Маракуйевый сок"}, "price": "30.000"}, {"names": {"vi": "Chanh tươi", "en": "Fresh Lime Juice", "ko": "생라임 주스", "zh": "鲜榨青柠汁", "ru": "Свежевыжатый лимонный сок"}, "price": "25.000"}, {"names": {"vi": "Pepsi", "en": "Pepsi", "ko": "펩시", "zh": "百事可乐", "ru": "Пепси"}, "price": "17.000"}, {"names": {"vi": "Pepsi Zero Sugar", "en": "Pepsi Zero Sugar", "ko": "펩시 제로", "zh": "百事零糖", "ru": "Пепси без сахара"}, "price": "17.000"}, {"names": {"vi": "7 Up", "en": "7 Up", "ko": "세븐업", "zh": "七喜", "ru": "7 Ап"}, "price": "17.000"}, {"names": {"vi": "Twister", "en": "Twister", "ko": "트위스터", "zh": "柠檬汽水", "ru": "Твистер"}, "price": "17.000"}, {"names": {"vi": "Aquafina", "en": "Bottled Water", "ko": "생수", "zh": "矿泉水", "ru": "Вода"}, "price": "10.000"}, {"names": {"vi": "Larue", "en": "Larue Beer (Can)", "ko": "라루 맥주", "zh": "拉鲁啤酒", "ru": "Пиво Ларю"}, "price": "18.000"}, {"names": {"vi": "Huda (lon cao)", "en": "Huda Beer (Tall Can)", "ko": "후다 맥주 (롱캔)", "zh": "虎达啤酒(高罐)", "ru": "Пиво Худа"}, "price": "20.000"}, {"names": {"vi": "Tiger bạc (lon 250ml)", "en": "Tiger Crystal Beer (250ml Can)", "ko": "타이거 크리스탈 맥주 (250ml)", "zh": "虎牌水晶啤酒(250ml)", "ru": "Тигровое пиво Crystal"}, "price": "21.000"}, {"names": {"vi": "Tiger nâu (lon 330ml)", "en": "Tiger Beer (330ml Can)", "ko": "타이거 맥주 (330ml)", "zh": "虎牌啤酒(330ml)", "ru": "Пиво Тайгер"}, "price": "24.000"}, {"names": {"vi": "Tiger bạc (lon 330ml)", "en": "Tiger Crystal Beer (330ml Can)", "ko": "타이거 크리스탈 맥주 (330ml캔)", "zh": "虎牌水晶啤酒(330ml罐)", "ru": "Тигровое Crystal (330ml)"}, "price": "24.000"}, {"names": {"vi": "Tiger bạc (chai 330ml)", "en": "Tiger Crystal Beer (330ml Bottle)", "ko": "타이거 크리스탈 맥주 (330ml병)", "zh": "虎牌水晶啤酒(330ml瓶)", "ru": "Тигровое Crystal бутылка"}, "price": "24.000"}, {"names": {"vi": "Heineken xanh (chai 330ml)", "en": "Heineken Original Beer", "ko": "하이네켄 오리지날 (330ml병)", "zh": "喜力啤酒(330ml瓶)", "ru": "Пиво Heineken"}, "price": "24.000"}, {"names": {"vi": "Heineken bạc (chai 330ml)", "en": "Heineken Silver Beer", "ko": "하이네켄 실버 (330ml병)", "zh": "喜力银（330ml瓶）", "ru": "Heineken Silver"}, "price": "24.000"}, {"names": {"vi": "Heineken 0 độ", "en": "Heineken 0.0 Alcohol-Free Beer", "ko": "하이네켄 무알코올", "zh": "喜力零度啤酒", "ru": "Heineken безалкогольное"}, "price": "26.000"}, {"names": {"vi": "Khăn lạnh", "en": "Wet Towel", "ko": "물티슈", "zh": "湿巾", "ru": "Влажная салфетка"}, "price": "3.000"}]}];
+        const menuData = [
+{"names":{"vi":"MÓN ĂN SÁNG","en":"Breakfast","ko":"아침 식사 메뉴","zh":"早餐菜单","ru":"Завтраки"},"items":[
+{"names":{"vi":"Phở bò","en":"Beef Pho","ko":"소고기 쌀국수","zh":"牛肉河粉","ru":"Фо-бо"},"price":"45.000","img":"pho-bo.jpg"},
+{"names":{"vi":"Bún bò Nam Bộ","en":"Vietnamese Southern-Style Beef Vermicelli","ko":"베트남 남부식 소고기 쌀국수","zh":"越南南部牛肉米线","ru":"Вьетнамская рисовая лапша с говядиной по-южному"},"price":"40.000","img":"bun-bo-nam-bo.jpg"},
+{"names":{"vi":"Xôi","en":"Sticky Rice","ko":"찹쌀밥","zh":"糯米饭","ru":"Клейкий рис"},"price":"40.000"},
+{"names":{"vi":"Bánh cuốn Thanh Trì","en":"Thanh Tri Steamed Rice Rolls","ko":"탄찌 쌀롤","zh":"青池蒸米卷","ru":"Бань куон Тхань Чи"},"price":"85.000","img":"banh-cuon-thanh-tri.jpg"},
+{"names":{"vi":"Bánh mì","en":"Vietnamese Banh Mi","ko":"베트남 반미","zh":"越南法棍三明治","ru":"Bánh mì вьетнамский"},"price":"35.000","img":"banh-mi.jpg"},
+{"names":{"vi":"Bánh mì sizzling","en":"Vietnamese Sizzling Pan Banh Mi","ko":"베트남식 철판 Banh Mi","zh":"越南铁板 Banh Mi","ru":"Вьетнамский Banh Mi на горячей сковороде"},"price":"105.000","img":"banh-mi-sizzling.jpg"},
+{"names":{"vi":"Bún chả Hà Nội","en":"Hanoi Grilled Pork with Vermicelli","ko":"하노이 분짜","zh":"河内烤肉米线","ru":"Бун ча Ханоя"},"price":"50.000","img":"bun-cha-ha-noi.jpg"},
+{"names":{"vi":"Bún đậu mắm tôm","en":"Rice Vermicelli with Fried Tofu","ko":"두부와 쌀국수","zh":"豆腐米线","ru":"Бун дау с креветочной пастой"},"price":"65.000","img":"bun-dau-mam-tom.jpg"},
+{"names":{"vi":"Cơm tấm Sài Gòn","en":"Saigon Broken Rice","ko":"사이공 껌땀","zh":"西贡碎米饭","ru":"Ком там Сайгона"},"price":"85.000","img":"com-tam-sai-gon.jpg"}]},
+
+{"names":{"vi":"SALAD","en":"Salad","ko":"샐러드","zh":"沙拉","ru":"Салаты"},"items":[
+{"names":{"vi":"Salad rong biển trứng cua","en":"Seaweed salad with crab roe","ko":"해초 게알 샐러드","zh":"海藻蟹籽沙拉","ru":"Салат из водорослей с икрой краба"},"price":"135.000"},
+{"names":{"vi":"Gỏi sứa","en":"Jellyfish salad","ko":"해파리 샐러드","zh":"海蜇沙拉","ru":"Салат с медузой"},"price":"90.000","img":"goi-sua.jpg"},
+{"names":{"vi":"Gỏi bò rau càng cua","en":"Beef & wild watercress salad","ko":"소고기 깡꾸아 샐러드","zh":"假蒌叶牛肉沙拉","ru":"Салат с говядиной и зеленью"},"price":"120.000","img":"goi-bo-rau-cang-cua.jpg"},
+{"names":{"vi":"Salad rau xanh bò Kobe","en":"Kobe Beef Green Salad","ko":"고베 소고기 그린 샐러드","zh":"神户牛肉田园沙拉","ru":"Салат с говядиной Кобе"},"price":"275.000","img":"salad-rau-xanh-bo-kobe.jpg"},
+{"names":{"vi":"Salad rau xanh","en":"Garden green salad","ko":"그린 샐러드","zh":"时蔬沙拉","ru":"Салат из зелени"},"price":"85.000","img":"salad-rau-xanh.jpg"},
+{"names":{"vi":"Salad lườn ngỗng","en":"Smoked goose breast salad","ko":"훈제 거위 가슴살 샐러드","zh":"烟熏鹅胸沙拉","ru":"Салат с филе гуся"},"price":"120.000"},
+{"names":{"vi":"Salad cá hồi hoa quả","en":"Salmon Fruit Salad","ko":"연어 과일 샐러드","zh":"三文鱼水果沙拉","ru":"Салат с фруктами и лососем"},"price":"265.000","img":"salad-ca-hoi-hoa-qua.jpg"}]},
+
+{"names":{"vi":"KHAI VỊ","en":"Appetizers","ko":"애피타이저","zh":"开胃菜","ru":"Закуски"},"items":[
+{"names":{"vi":"Đậu hũ hải sản khói lửa","en":"Seafood Tofu","ko":"해물 두부","zh":"海鲜豆腐","ru":"Тофу с морепродуктами"},"price":"185.000"},
+{"names":{"vi":"Đậu hũ sốt trứng muối","en":"Tofu with salted egg sauce","ko":"짠 계란노른자 소스 두부","zh":"咸蛋黄酱豆腐","ru":"Тофу с соусом из солёного яйца"},"price":"95.000","img":"dau-hu-sot-trung-muoi.jpg"},
+{"names":{"vi":"Đậu hũ chà bông trứng bắc thảo","en":"Silken tofu with pork floss and century egg","ko":"피단 두부","zh":"皮蛋豆腐","ru":"Тофу с мясной стружкой и столетним яйцом"},"price":"155.000","img":"dau-hu-cha-bong-trung-bac-thao.jpg"},
+{"names":{"vi":"Khoai tây chiên","en":"French fries","ko":"감자튀김","zh":"薯条","ru":"Картофель фри"},"price":"50.000","img":"khoai-tay-chien.jpg"},
+{"names":{"vi":"Ba chỉ then len","en":"Then Len pork belly","ko":"텐렌 잎을 곁들인 삼겹살","zh":"五花肉配Then Len香叶","ru":"Свинина Тхэн Лен"},"price":"145.000","img":"ba-chi-then-len.jpg"},
+{"names":{"vi":"Ba chỉ ngâm mắm","en":"Pork belly in fish sauce","ko":"느억맘에 절인 삼겹살","zh":"鱼露腌五花肉","ru":"Свинина в рыбном соусе"},"price":"145.000","img":"ba-chi-ngam-mam.jpg"},
+{"names":{"vi":"Bò một nắng muối kiến","en":"Sun-dried grilled beef with ant salt","ko":"개미소금 소고기 육포","zh":"蚂蚁盐牛肉干","ru":"Вяленая говядина с муравьиной солью"},"price":"145.000","img":"bo-mot-nang-muoi-kien.jpg"},
+{"names":{"vi":"Bắp bò Tứ Xuyên","en":"Sichuan Beef Shank","ko":"사천식 소고기 사태","zh":"四川牛腱","ru":"Говядина по-сычуаньски"},"price":"125.000"},
+{"names":{"vi":"Chả mực Hạ Long","en":"Ha Long Style Squid Cakes","ko":"하롱식 오징어 완자","zh":"下龙风味墨鱼饼","ru":"Кальмарные котлеты Халонга"},"price":"205.000"},
+{"names":{"vi":"Chả mỡ","en":"Vietnamese pork patty","ko":"베트남식 돼지고기 완자튀김","zh":"越式炸肉饼","ru":"Свиной паштет на гриле"},"price":"165.000","img":"cha-mo.jpg"},
+{"names":{"vi":"Chả cốm Hà Nội","en":"Hanoi young green rice pork patties","ko":"하노이식 풋쌀 돼지고기 완자","zh":"河内绿米猪肉饼","ru":"Ча ком Ханоя"},"price":"115.000","img":"cha-com-ha-noi.jpg"},
+{"names":{"vi":"Chả cá Thăng Long","en":"Thang Long Grilled Fish","ko":"탕롱 생선구이","zh":"升龙烤鱼","ru":"Ча ка Тханг Лонг"},"price":"230.000","img":"cha-ca-thang-long.jpg"}]},
+
+{"names":{"vi":"MÓN NEM","en":"Vietnamese Spring Rolls","ko":"베트남식 스프링롤","zh":"越南春卷","ru":"Немы"},"items":[
+{"names":{"vi":"Nem rán Hà Nội (4 cái)","en":"Ha Noi fried spring rolls (4 pcs)","ko":"하노이식 튀김 스프링롤 (4개)","zh":"河内炸春卷 (4个)","ru":"Ханойские жареные немы (4 шт.)"},"price":"75.000"},
+{"names":{"vi":"Nem rau (5 cái)","en":"Vegetable spring rolls (5 pcs)","ko":"채소 스프링롤 (5개)","zh":"蔬菜春卷 (5个)","ru":"Овощные немы (5 шт.)"},"price":"75.000","img":"nem-rau-5-cai.jpg"},
+{"names":{"vi":"Chả ram tôm đất","en":"Crispy shrimp rice paper rolls","ko":"새우 짜조","zh":"越式炸虾春卷","ru":"Хрустящие рулетики с креветками"},"price":"95.000","img":"cha-ram-tom-dat.jpg"},
+{"names":{"vi":"Vằn thắn tôm thịt chiên (5 cái)","en":"Crispy Fried Shrimp & Pork Wontons (5 pcs)","ko":"새우·돼지고기 튀김 완탕 (5개)","zh":"香炸鲜虾猪肉馄饨(5个)","ru":"Жареные вонтоны с креветками и свининой (5 шт.)"},"price":"95.000","img":"van-than-tom-thit-chien-5-cai.jpg"},
+{"names":{"vi":"Set nem rán","en":"Fried spring roll set","ko":"튀김 롤 세트","zh":"炸春卷套餐","ru":"Сет жареных немов"},"price":"195.000","img":"set-nem-ran.jpg"},
+{"names":{"vi":"Set nem rán + trà","en":"Fried spring roll set + tropical fruit tea","ko":"튀김 롤 세트 + 열대 과일차","zh":"炸春卷套餐 + 水果茶","ru":"Сет немов + чай"},"price":"285.000","img":"set-nem-ran-tra.jpg"},
+{"names":{"vi":"Vằn thắn tôm thịt nước (5 cái)","en":"Shrimp & Pork Wonton Soup (5 pcs)","ko":"새우·돼지고기 완탕국 (5개)","zh":"鲜虾猪肉馄饨汤(5个)","ru":"Вонтоны в бульоне (5 шт.)"},"price":"95.000","img":"van-than-tom-thit-nuoc-5-cai.jpg"}]},
+
+{"names":{"vi":"MÓN CUỐN","en":"Vietnamese Fresh Rolls","ko":"베트남식 생롤","zh":"越南鲜卷","ru":"Вьетнамские рулетики"},"items":[
+{"names":{"vi":"Phở cuốn bò (4 cái)","en":"Beef pho rolls (4 pcs)","ko":"하노이 소고기 쌀국수롤 (4개)","zh":"河内牛肉河粉卷 (4个)","ru":"Рисовые рулетики с говядиной (4 шт.)"},"price":"88.000","img":"pho-cuon-bo-4-cai.jpg"},
+{"names":{"vi":"Cuốn tôm thịt (4 cái)","en":"Fresh shrimp & pork spring rolls (4 pcs)","ko":"새우·돼지고기 월남쌈 (4개)","zh":"鲜虾猪肉卷(4个)","ru":"Рулетики с креветками и свининой (4 шт.)"},"price":"99.000","img":"cuon-tom-thit-4-cai.jpg"},
+{"names":{"vi":"Nem chua và bì cuốn đu đủ (4 cái)","en":"Fermented pork & pork skin rolls with papaya (4 pcs)","ko":"발효 돼지고기·돼지껍질 파파야 말이 (4개)","zh":"发酵猪肉配猪皮和青木瓜(4个)","ru":"Рулетики с немом (4 шт.)"},"price":"72.000","img":"nem-chua-va-bi-cuon-du-du-4-cai.jpg"},
+{"names":{"vi":"Set cuốn","en":"Vietnamese roll set","ko":"베트남 롤 세트","zh":"越式卷拼盘套餐","ru":"Сет рулетиков"},"price":"185.000","img":"set-cuon.jpg"},
+{"names":{"vi":"Set cuốn + trà","en":"Roll set + tropical fruit tea","ko":"롤 세트 + 열대 과일차","zh":"卷拼盘 + 水果茶","ru":"Сет рулетиков + чай"},"price":"275.000","img":"set-cuon-tra.jpg"},
+{"names":{"vi":"Bò cuốn mỡ chài","en":"Grilled beef wrapped in caul fat","ko":"지방막 소고기말이","zh":"网油牛肉卷","ru":"Говядина в сетке из свиного жира"},"price":"165.000","img":"bo-cuon-mo-chai.jpg"}]},
+
+{"names":{"vi":"BÁNH MIỀN TRUNG","en":"Traditional Central Vietnamese Cakes","ko":"베트남 중부 전통 떡","zh":"越南中部传统糕点","ru":"Блюда из Центрального Вьетнама"},"items":[
+{"names":{"vi":"Set bánh (2 Nậm, 2 Lọc, 2 Ram ít)","en":"Vietnamese traditional cake set","ko":"베트남 전통 떡 세트","zh":"越南传统糕点套餐","ru":"Сет вьетнамских пирожков"},"price":"85.000"},
+{"names":{"vi":"Bánh xèo miền Trung (3 cái)","en":"Central Vietnamese crispy pancake (3 pcs)","ko":"중부식 반쎄오 (3개)","zh":"越南中部煎饼(3个)","ru":"Бань сео (3 шт.)"},"price":"85.000","img":"banh-xeo-mien-trung-3-cai.jpg"},
+{"names":{"vi":"Bánh khọt (6 cái)","en":"Mini savory pancakes (6 pcs)","ko":"반콧 (6개)","zh":"迷你煎饼盏 (6个)","ru":"Бань кот (6 шт.)"},"price":"85.000","img":"banh-khot-6-cai.jpg"},
+{"names":{"vi":"Bánh nậm (5 cái)","en":"Vietnamese Steamed Flat Rice Cake (5 pcs)","ko":"베트남 반남 (5개)","zh":"越南南饼(5个)","ru":"Бань нам (5 шт.)"},"price":"65.000","img":"banh-nam-5-cai.jpg"},
+{"names":{"vi":"Bánh bột lọc (5 cái)","en":"Vietnamese Tapioca Dumplings (5 pcs)","ko":"베트남 반봇록 (5개)","zh":"越南木薯粉水晶饺(5个)","ru":"Бань бот лок (5 шт.)"},"price":"65.000","img":"banh-bot-loc-5-cai.jpg"},
+{"names":{"vi":"Bánh ram ít (5 cái)","en":"Vietnamese Crispy Rice Dumplings (5 pcs)","ko":"베트남 반람잇 (5개)","zh":"越南炸糯米饼(5个)","ru":"Бань рам ит (5 шт.)"},"price":"65.000","img":"banh-ram-it-5-cai.jpg"}]},
+
+{"names":{"vi":"MÓN CHIM CÂU VÀ GÀ HẦM","en":"Pigeon & Stewed Chicken","ko":"비둘기 & 닭찜","zh":"乳鸽 & 炖鸡","ru":"Голуби и тушёная курица"},"items":[
+{"names":{"vi":"Chim câu quay da giòn","en":"Crispy Roasted Squab","ko":"바삭한 비둘기 구이","zh":"脆皮乳鸽","ru":"Жареный голубь с хрустящей кожей"},"price":"165.000/con","img":"chim-cau-quay-da-gion.jpg"},
+{"names":{"vi":"Chim câu xào cà","en":"Stir-fried Squab with Pickled Eggplant","ko":"가지절임을 곁들인 비둘기 볶음","zh":"乳鸽炒腌茄子","ru":"Голубь с баклажанами"},"price":"185.000","img":"chim-cau-xao-ca.jpg"},
+{"names":{"vi":"Chim câu nhồi cốm hạt sen","en":"Squab Stuffed with Green Rice & Lotus Seeds","ko":"연꽃씨와 풋찹쌀을 채운 비둘기","zh":"莲子青稞酿乳鸽","ru":"Голубь, фаршированный зелёным рисом и лотосом"},"price":"265.000","img":"chim-cau-nhoi-com-hat-sen.jpg"},
+{"names":{"vi":"Gà hầm bí đỏ (1/2 con)","en":"Stewed Chicken with Pumpkin","ko":"단호박을 넣어 푹 끓인 닭고기","zh":"南瓜炖鸡","ru":"Курица, тушёная с тыквой"},"price":"285.000"}]},
+
+{"names":{"vi":"MÓN GÀ","en":"Chicken","ko":"닭고기","zh":"鸡肉","ru":"Блюда из курицы"},"items":[
+{"names":{"vi":"Đùi gà chiên xù","en":"Crispy Fried Chicken Drumsticks","ko":"바삭한 닭다리 튀김","zh":"香酥炸鸡腿","ru":"Куриные ножки в хрустящей панировке"},"price":"150.000","img":"dui-ga-chien-xu.jpg"},
+{"names":{"vi":"Gà cuộn lá dứa","en":"Chicken wrapped in pandan leaves","ko":"판단잎으로 감싼 닭튀김","zh":"香兰叶鸡卷","ru":"Курица с листьями пандана"},"price":"145.000","img":"ga-cuon-la-dua.jpg"},
+{"names":{"vi":"Gà chiên mắm","en":"Fried Chicken with Fish Sauce","ko":"피시소스 치킨 튀김","zh":"鱼露炸鸡","ru":"Курица в рыбном соусе"},"price":"145.000","img":"ga-chien-mam.jpg"},
+{"names":{"vi":"Gà nướng sả cây","en":"Lemongrass grilled chicken","ko":"레몬그라스 치킨구이","zh":"香茅烤鸡","ru":"Курица на гриле с лемонграссом"},"price":"150.000","img":"ga-nuong-sa-cay.jpg"},
+{"names":{"vi":"Gà xào lá quế hạt điều","en":"Stir-fried chicken with basil & cashews","ko":"바질 캐슈넛 치킨볶음","zh":"罗勒腰果炒鸡","ru":"Курица с базиликом и кешью"},"price":"155.000","img":"ga-xao-la-que-hat-dieu.jpg"}]},
+
+{"names":{"vi":"MÓN BÒ","en":"Beef","ko":"소고기","zh":"牛肉","ru":"Блюда из говядины"},"items":[
+{"names":{"vi":"Bò xào khoai tây chiên","en":"Stir-fried beef with french fries","ko":"감자튀김 소고기 볶음","zh":"薯条炒牛肉","ru":"Говядина с жареным картофелем"},"price":"160.000","img":"bo-xao-khoai-tay-chien.jpg"},
+{"names":{"vi":"Bò xào nụ bí","en":"Stir-fried beef with pumpkin shoots","ko":"호박순 소고기 볶음","zh":"南瓜苗炒牛肉","ru":"Говядина с цветками тыквы"},"price":"165.000","img":"bo-xao-nu-bi.jpg"},
+{"names":{"vi":"Bò sốt tiêu đen","en":"Beef with Black Pepper Sauce","ko":"블랙페퍼 소스 소고기","zh":"黑椒牛肉","ru":"Говядина в соусе из чёрного перца"},"price":"230.000","img":"bo-sot-tieu-den.jpg"},
+{"names":{"vi":"Bò lúc lắc","en":"Shaking beef","ko":"흔들이 소고기 (보룩락)","zh":"摇摇牛肉","ru":"Бифштекс «Лук лак»"},"price":"230.000"}]},
+
+{"names":{"vi":"MÓN BÊ","en":"Veal","ko":"송아지고기","zh":"小牛肉","ru":"Блюда из телятины"},"items":[
+{"names":{"vi":"Bê xào sả ớt","en":"Stir-fried Veal with Lemongrass & Chili","ko":"레몬그라스와 고추를 넣어 볶은 송아지고기","zh":"香茅辣椒炒小牛肉","ru":"Телятина с лемонграссом и чили"},"price":"195.000","img":"be-xao-sa-ot.jpg"},
+{"names":{"vi":"Bê tái tương","en":"Rare Veal with Fermented Soybean Sauce","ko":"된장 소스를 곁들인 레어 송아지고기","zh":"酱拌生嫩小牛肉","ru":"Телятина с соусом"},"price":"225.000","img":"be-tai-tuong.jpg"},
+{"names":{"vi":"Bê chao bản gang","en":"Cast-Iron Pan Seared Veal","ko":"무쇠 팬에 구운 송아지고기","zh":"铁板香煎小牛肉","ru":"Жареная телятина на чугунной сковороде"},"price":"235.000","img":"be-chao-ban-gang.jpg"},
+{"names":{"vi":"Bê hấp đá núi lửa","en":"Volcanic Stone-Steamed Veal","ko":"화산석으로 찐 송아지고기","zh":"火山石蒸小牛肉","ru":"Телятина на вулканическом камне"},"price":"255.000","img":"be-hap-da-nui-lua.jpg"}]},
+
+{"names":{"vi":"MÓN HEO","en":"Pork","ko":"돼지고기","zh":"猪肉","ru":"Блюда из свинины"},"items":[
+{"names":{"vi":"Má heo tắm nắng","en":"Sun-dried pork cheeks","ko":"선드라이 돼지볼살","zh":"风干猪颊肉","ru":"Свиные щёчки вяленые на солнце"},"price":"145.000"},
+{"names":{"vi":"Má heo nướng","en":"Grilled pork cheeks","ko":"돼지볼살 구이","zh":"烤猪颊肉","ru":"Жареные свиные щёчки"},"price":"145.000","img":"ma-heo-nuong.jpg"},
+{"names":{"vi":"Thăn heo chiên xù phô mai","en":"Cheese-stuffed breaded pork loin","ko":"치즈 스터프드 돈까스","zh":"芝士夹心炸猪排","ru":"Хрустящая свиная вырезка с сыром"},"price":"155.000","img":"than-heo-chien-xu-pho-mai.jpg"},
+{"names":{"vi":"Vai heo chiên xù","en":"Crispy Fried Pork Shoulder","ko":"바삭한 돼지 목살 튀김","zh":"香酥炸猪肩肉","ru":"Свиная лопатка в хрустящей панировке"},"price":"150.000","img":"vai-heo-chien-xu.jpg"},
+{"names":{"vi":"Sườn heo nướng BBQ","en":"BBQ Grilled Pork Ribs","ko":"BBQ 돼지갈비 구이","zh":"BBQ烤猪排骨","ru":"Свиные рёбра BBQ"},"price":"235.000","img":"suon-heo-nuong-bbq.jpg"},
+{"names":{"vi":"Sườn heo chiên tỏi","en":"Garlic fried pork ribs","ko":"마늘튀김 폭립","zh":"蒜香炸排骨","ru":"Свиные рёбра с чесноком"},"price":"235.000"},
+{"names":{"vi":"Sườn heo nướng tảng","en":"Whole Rack of Grilled Pork Ribs","ko":"통돼지갈비 구이","zh":"整排烤猪肋排","ru":"Запечённые свиные рёбра порцией"},"price":"480.000","img":"suon-heo-nuong-tang.jpg"}]},
+
+{"names":{"vi":"MÓN ẾCH VÀ LƯƠN","en":"Frog & Eel","ko":"개구리 & 장어","zh":"田鸡 & 鳝鱼","ru":"Блюда из лягушки и угря"},"items":[
+{"names":{"vi":"Ếch chiên mắm","en":"Fried Frog with Fish Sauce","ko":"피시소스를 곁들인 개구리 튀김","zh":"鱼露炸田鸡","ru":"Лягушка в рыбном соусе"},"price":"150.000"},
+{"names":{"vi":"Ếch rang muối","en":"Salt-Roasted Frog","ko":"소금 볶음 개구리","zh":"椒盐田鸡","ru":"Лягушка с солью"},"price":"150.000","img":"ech-rang-muoi.jpg"},
+{"names":{"vi":"Ếch um bầu","en":"Vietnamese Braised Frog with Bottle Gourd","ko":"애호박을 넣은 개구리 조림","zh":"蒲瓜焖田鸡","ru":"Лягушка с тыквой"},"price":"185.000"},
+{"names":{"vi":"Lươn xào xả ớt","en":"Stir-fried Eel with Lemongrass & Chili","ko":"레몬그라스와 고추를 곁들인 장어볶음","zh":"香茅辣椒炒鳝鱼","ru":"Угорь с лемонграссом и чили"},"price":"165.000","img":"luon-xao-xa-ot.jpg"},
+{"names":{"vi":"Lươn om chuối","en":"Braised Eel with Green Banana","ko":"풋바나나를 넣은 장어조림","zh":"青香蕉焖鳝鱼","ru":"Угорь с бананом"},"price":"285.000","img":"luon-om-chuoi.jpg"}]},
+
+{"names":{"vi":"MỰC ỐNG VÀ MỰC MỘT NẮNG","en":"Squid & Semi-Dried Squid","ko":"오징어 & 반건조 오징어","zh":"鲜鱿鱼和一夜干鱿鱼","ru":"Кальмары"},"items":[
+{"names":{"vi":"Mực ống chiên xù","en":"Crispy Fried Squid","ko":"바삭하게 튀긴 오징어","zh":"香酥炸鱿鱼","ru":"Кальмары в хрустящей панировке"},"price":"230.000"},
+{"names":{"vi":"Mực ống chiên bơ tỏi","en":"Fried Squid with Garlic Butter","ko":"갈릭 버터 오징어","zh":"蒜香黄油鱿鱼","ru":"Кальмары с чесночным маслом"},"price":"230.000","img":"muc-ong-chien-bo-toi.jpg"},
+{"names":{"vi":"Mực một nắng chiên mắm","en":"Sun-Dried Squid Fried with Fish Sauce","ko":"피시소스로 볶은 반건조 오징어","zh":"鱼露香煎一晒鱿鱼","ru":"Вяленые кальмары в рыбном соусе"},"price":"375.000","img":"muc-mot-nang-chien-mam.jpg"},
+{"names":{"vi":"Mực một nắng nướng mọi","en":"Grilled Sun-Dried Squid","ko":"직화로 구운 반건조 오징어","zh":"原味烤一晒鱿鱼","ru":"Вяленые кальмары на гриле"},"price":"375.000","img":"muc-mot-nang-nuong-moi.jpg"},
+{"names":{"vi":"Mực một nắng nướng sa tế","en":"Sun-Dried Squid Grilled with Satay Sauce","ko":"사테소스를 발라 구운 반건조 오징어","zh":"沙爹酱烤一晒鱿鱼","ru":"Вяленые кальмары с сатэ на гриле"},"price":"375.000","img":"muc-mot-nang-nuong-sa-te.jpg"}]},
+
+{"names":{"vi":"SASHIMI","en":"Sashimi","ko":"사시미","zh":"刺身","ru":"Сашими"},"items":[
+{"names":{"vi":"Sashimi tổng hợp","en":"Assorted Sashimi","ko":"모둠 사시미","zh":"刺身拼盘","ru":"Ассорти сашими"},"price":"325.000"},
+{"names":{"vi":"Sashimi cá hồi","en":"Salmon Sashimi","ko":"연어 사시미","zh":"三文鱼刺身","ru":"Сашими из лосося"},"price":"165.000","img":"sashimi-ca-hoi.jpg"},
+{"names":{"vi":"Sashimi cá trích vàng","en":"Golden Herring Sashimi","ko":"황금 청어알","zh":"黄金鱼籽鲱鱼","ru":"Сашими из сельди"},"price":"165.000","img":"sashimi-ca-trich-vang.jpg"},
+{"names":{"vi":"Sashimi cá trích đỏ","en":"Red Herring Sashimi","ko":"붉은 청어알","zh":"红鱼籽鲱鱼","ru":"Сашими из красной сельди"},"price":"165.000","img":"sashimi-ca-trich-do.jpg"}]},
+
+{"names":{"vi":"HẢI SẢN","en":"Seafood","ko":"해산물","zh":"海鲜","ru":"Морепродукты"},"items":[
+{"names":{"vi":"Cá chim biển","en":"Pomfret","ko":"병어","zh":"鲳鱼","ru":"Морской помфрет"},"price":"600.000/kg (Hấp xì dầu / Chiên giòn / Canh chua / Lẩu)"},
+{"names":{"vi":"Cá bơn Hàn Quốc","en":"Korean Halibut","ko":"한국산 광어","zh":"韩国比目鱼","ru":"Корейская камбала"},"price":"1.450.000/kg (Sashimi / Hấp xì dầu / Nướng muối ớt)"},
+{"names":{"vi":"Cá chình","en":"Conger Eel","ko":"장어","zh":"鳗鱼","ru":"Угорь"},"price":"350.000 (Hấp miến / Nướng sốt xì dầu)"},
+{"names":{"vi":"Cá mú","en":"Grouper","ko":"바리","zh":"石斑鱼","ru":"Групер"},"price":"650.000/kg (Hấp xì dầu / Chiên giòn / Sashimi)"},
+{"names":{"vi":"Sò bung","en":"Venus Clam","ko":"백합조개","zh":"花蛤","ru":"Венерка"},"price":"450.000/kg"},
+{"names":{"vi":"Sò dương","en":"Surf Clam","ko":"북방조개","zh":"北寄贝","ru":"Серфклем"},"price":"350.000/kg"},
+{"names":{"vi":"Sò mía","en":"Razor Clam","ko":"맛조개","zh":"蛏子","ru":"Морской нож"},"price":"300.000/kg"},
+{"names":{"vi":"Sò lông xanh","en":"Hairy Clam","ko":"털조개","zh":"毛蚶","ru":"Волосатая ракушка"},"price":"220.000/kg"},
+{"names":{"vi":"Sò méo","en":"Ark Clam","ko":"피조개","zh":"赤贝","ru":"Моллюск"},"price":"200.000/kg"},
+{"names":{"vi":"Sò mai","en":"Comb Pen Shell","ko":"창조개","zh":"海月贝","ru":"Морской гребешок"},"price":"110.000/con"},
+{"names":{"vi":"Nghêu đen","en":"Black Clam","ko":"검은조개","zh":"黑蛤蜊","ru":"Чёрные моллюски"},"price":"300.000/kg"},
+{"names":{"vi":"Chíp chíp","en":"Small Wedge Clam","ko":"비단조개","zh":"细脂蛤","ru":"Клемы"},"price":"250.000/kg"},
+{"names":{"vi":"Vẹm xanh","en":"Green-lipped Mussel","ko":"초록입홍합","zh":"翡翠贻贝","ru":"Мидии"},"price":"220.000/kg"},
+{"names":{"vi":"Hàu","en":"Oyster","ko":"굴","zh":"牡蛎","ru":"Устрица"},"price":"170.000/kg"},
+{"names":{"vi":"Ốc hương","en":"Sweet Snail","ko":"바빌로니아 소라","zh":"香螺","ru":"Морские улитки"},"price":"690.000/kg"},
+{"names":{"vi":"Ốc gai","en":"Spiny Murex","ko":"뿔소라","zh":"刺螺","ru":"Улитка с шипами"},"price":"550.000/kg"},
+{"names":{"vi":"Bề bề","en":"Mantis Shrimp","ko":"갯가재","zh":"皮皮虾","ru":"Креветка-богомол"},"price":"1.950.000/kg"},
+{"names":{"vi":"Tôm sú","en":"Tiger Prawn","ko":"블랙타이거 새우","zh":"黑虎虾","ru":"Тигровая креветка"},"price":"900.000/kg"},
+{"names":{"vi":"Tôm mũ ni","en":"Slipper Lobster","ko":"매미새우","zh":"琵琶虾","ru":"Лобстер-тапочка"},"price":"MP"},
+{"names":{"vi":"Cua bể thịt","en":"Meaty Mud Crab","ko":"수꽃게","zh":"肉蟹","ru":"Морской краб"},"price":"950.000/kg"},
+{"names":{"vi":"Cua bể gạch","en":"Female Mud Crab with Roe","ko":"암꽃게 알배기","zh":"膏蟹","ru":"Краб с икрой"},"price":"1.050.000/kg"},
+{"names":{"vi":"Ghẹ","en":"Blue Swimming Crab","ko":"꽃게","zh":"花蟹","ru":"Краб-плавунец"},"price":"1.150.000/kg"},
+{"names":{"vi":"Cua hoàng đế","en":"King Crab","ko":"킹크랩","zh":"帝王蟹","ru":"Камчатский краб"},"price":"MP"},
+{"names":{"vi":"Bào ngư","en":"Abalone","ko":"전복","zh":"鲍鱼","ru":"Морское ушко"},"price":"1.250.000/kg"},
+{"names":{"vi":"Mực lá","en":"Cuttlefish","ko":"갑오징어","zh":"墨鱼","ru":"Каракатица"},"price":"800.000/kg"},
+{"names":{"vi":"Mực trứng","en":"Egg Squid","ko":"알오징어","zh":"籽乌贼","ru":"Кальмар с икрой"},"price":"700.000/kg"},
+{"names":{"vi":"Tôm hùm xanh","en":"Green Spiny Lobster","ko":"청색가시가재","zh":"青龙虾","ru":"Синий лобстер"},"price":"1.900.000/kg"},
+{"names":{"vi":"Tôm hùm bông","en":"Ornate Spiny Lobster","ko":"꽃무늬가시가재","zh":"锦绣龙虾","ru":"Лобстер с цветным панцирем"},"price":"2.450.000/kg"},
+{"names":{"vi":"Tôm hùm Alaska","en":"Alaska Lobster","ko":"알래스카 랍스터","zh":"阿拉斯加龙虾","ru":"Аляскинский лобстер"},"price":"2.250.000/kg"}]},
+
+{"names":{"vi":"LẨU","en":"Hotpot","ko":"전골","zh":"火锅","ru":"Хотпот"},"items":[
+{"names":{"vi":"Lẩu Thái (hải sản tự chọn)","en":"Thai Hot Pot (Choice of Seafood)","ko":"태국식 전골 (해산물 선택)","zh":"泰式火锅（海鲜自选)","ru":"Тайский хотпот"},"price":"MP"},
+{"names":{"vi":"Lẩu chua cay (hải sản tự chọn)","en":"Spicy & Sour Hot Pot (Choice of Seafood)","ko":"매콤새콤 전골","zh":"酸辣火锅（海鲜自选）","ru":"Кисло-острый хотпот"},"price":"MP","img":"lau-chua-cay-hai-san-tu-chon.jpg"},
+{"names":{"vi":"Lẩu riêu cua bắp bò","en":"Crab Paste Hot Pot with Beef Shank","ko":"게살 된장 전골과 소고기 사태","zh":"蟹膏牛腱海鲜火锅","ru":"Суп с крабом и говяжьей голяшкой"},"price":"420.000","img":"lau-rieu-cua-bap-bo.jpg"}]},
+
+{"names":{"vi":"CƠM CANH","en":"Home-Style Meals","ko":"가정식","zh":"家常菜","ru":"Домашние блюда"},"items":[
+{"names":{"vi":"Cơm trắng","en":"Steamed Rice","ko":"공기밥","zh":"白米饭","ru":"Белый рис"},"price":"25.000"},
+{"names":{"vi":"Rau muống xào tỏi","en":"Stir-Fried Water Spinach with Garlic","ko":"마늘 공심채 볶음","zh":"蒜蓉空心菜","ru":"Жареный водяной шпинат с чесноком"},"price":"50.000"},
+{"names":{"vi":"Mùng tơi xào tỏi","en":"Stir-Fried Malabar Spinach with Garlic","ko":"마늘 말라바르시금치 볶음","zh":"蒜蓉木耳菜","ru":"Жареный малабарский шпинат с чесноком"},"price":"50.000","img":"mung-toi-xao-toi.jpg"},
+{"names":{"vi":"Nụ bí xào tỏi","en":"Stir-Fried Squash Shoots with Garlic","ko":"마늘 호박순 볶음","zh":"蒜蓉炒南瓜苗","ru":"Жареные цветочные бутоны тыквы с чесноком"},"price":"70.000"},
+{"names":{"vi":"Trứng rán","en":"Fried Egg","ko":"계란후라이","zh":"煎鸡蛋","ru":"Жареные яйца"},"price":"50.000"},
+{"names":{"vi":"Ba chỉ rang cháy cạnh","en":"Crispy Caramelized Pork Belly","ko":"바삭하게 볶은 삼겹살","zh":"香煎五花肉","ru":"Жареная свиная грудинка"},"price":"125.000","img":"ba-chi-rang-chay-canh.jpg"},
+{"names":{"vi":"Cơm rang hải sản","en":"Seafood Fried Rice","ko":"해물볶음밥","zh":"海鲜炒饭","ru":"Жареный рис с морепродуктами"},"price":"95.000"},
+{"names":{"vi":"Mỳ xào hải sản","en":"Stir-Fried Seafood Noodles","ko":"해물볶음면","zh":"海鲜炒面","ru":"Жареная лапша с морепродуктами"},"price":"95.000"},
+{"names":{"vi":"Miến xào hải sản","en":"Stir-Fried Seafood Glass Noodles","ko":"해물 잡채","zh":"海鲜炒粉丝","ru":"Жареная стеклянная лапша с морепродуктами"},"price":"115.000","img":"mien-xao-hai-san.jpg"},
+{"names":{"vi":"Cơm chiên cá hồi","en":"Salmon Fried Rice","ko":"연어 볶음밥","zh":"三文鱼炒饭","ru":"Жареный рис с лососем"},"price":"115.000"},
+{"names":{"vi":"Bò xào khoai tây","en":"Stir-Fried Beef with French Fries","ko":"감자튀김 소고기 볶음","zh":"薯条炒牛肉","ru":"Говядина с картофелем"},"price":"160.000"},
+{"names":{"vi":"Tôm mực xào dứa","en":"Stir-Fried Shrimp & Squid with Pineapple","ko":"파인애플 새우·오징어 볶음","zh":"菠萝炒虾仁鱿鱼","ru":"Жареные креветки и кальмары с ананасом"},"price":"230.000","img":"tom-muc-xao-dua.jpg"}]},
+
+{"names":{"vi":"ĐỒ UỐNG","en":"Beverages","ko":"음료","zh":"饮料","ru":"Напитки"},"items":[
+{"names":{"vi":"Bình trà hoa quả nhiệt đới","en":"Tropical Fruit Tea Pot","ko":"열대과일 차 주전자","zh":"热带水果茶壶","ru":"Кувшин с тропическим фруктовым чаем"},"price":"95.000","img":"binh-tra-hoa-qua-nhiet-doi.jpg"},
+{"names":{"vi":"Trà bí đao","en":"Winter Melon Tea","ko":"동과차","zh":"冬瓜茶","ru":"Чай из зимней дыни"},"price":"25.000","img":"tra-bi-dao.jpg"},
+{"names":{"vi":"Nước sấu đá","en":"Iced Dracontomelon Drink","ko":"아이스 사우 열매 음료","zh":"冰镇越南酸果饮","ru":"Напиток из плодов драцени с льдом"},"price":"25.000","img":"nuoc-sau-da.jpg"},
+{"names":{"vi":"Cam tươi","en":"Orange juice","ko":"오렌지 주스","zh":"鲜榨橙汁","ru":"Свежевыжатый апельсиновый сок"},"price":"35.000","img":"cam-tuoi.jpg"},
+{"names":{"vi":"Dưa hấu","en":"Watermelon juice","ko":"수박 주스","zh":"鲜榨西瓜汁","ru":"Арбузный сок"},"price":"30.000","img":"dua-hau.jpg"},
+{"names":{"vi":"Dứa (Thơm)","en":"Pineapple juice","ko":"파인애플 주스","zh":"鲜榨菠萝汁","ru":"Ананасовый сок"},"price":"30.000","img":"dua-thom.jpg"},
+{"names":{"vi":"Cà rốt","en":"Carrot juice","ko":"당근 주스","zh":"鲜榨胡萝卜汁","ru":"Морковный сок"},"price":"30.000","img":"ca-rot.jpg"},
+{"names":{"vi":"Chanh leo","en":"Passion fruit juice","ko":"패션프루트 주스","zh":"鲜榨百香果汁","ru":"Маракуйевый сок"},"price":"30.000","img":"chanh-leo.jpg"},
+{"names":{"vi":"Chanh tươi","en":"Fresh Lime Juice","ko":"생라임 주스","zh":"鲜榨青柠汁","ru":"Свежевыжатый лимонный сок"},"price":"25.000","img":"chanh-tuoi.jpg"},
+{"names":{"vi":"Pepsi","en":"Pepsi","ko":"펩시","zh":"百事可乐","ru":"Пепси"},"price":"17.000","img":"pepsi.jpg"},
+{"names":{"vi":"Pepsi Zero Sugar","en":"Pepsi Zero Sugar","ko":"펩시 제로","zh":"百事零糖","ru":"Пепси без сахара"},"price":"17.000","img":"pepsi-zero-sugar.jpg"},
+{"names":{"vi":"7 Up","en":"7 Up","ko":"세븐업","zh":"七喜","ru":"7 Ап"},"price":"17.000","img":"7-up.jpg"},
+{"names":{"vi":"Twister","en":"Twister","ko":"트위스터","zh":"柠檬汽水","ru":"Твистер"},"price":"17.000","img":"twister.jpg"},
+{"names":{"vi":"Aquafina","en":"Bottled Water","ko":"생수","zh":"矿泉水","ru":"Вода"},"price":"10.000","img":"aquafina.jpg"},
+{"names":{"vi":"Larue","en":"Larue Beer (Can)","ko":"라루 맥주","zh":"拉鲁啤酒","ru":"Пиво Ларю"},"price":"18.000","img":"larue.jpg"},
+{"names":{"vi":"Huda (lon cao)","en":"Huda Beer (Tall Can)","ko":"후다 맥주 (롱캔)","zh":"虎达啤酒(高罐)","ru":"Пиво Худа"},"price":"20.000","img":"huda-lon-cao.jpg"},
+{"names":{"vi":"Tiger bạc (lon 250ml)","en":"Tiger Crystal Beer (250ml Can)","ko":"타이거 크리스탈 맥주 (250ml)","zh":"虎牌水晶啤酒(250ml)","ru":"Тигровое пиво Crystal"},"price":"21.000","img":"tiger-bac-lon-250ml.jpg"},
+{"names":{"vi":"Tiger nâu (lon 330ml)","en":"Tiger Beer (330ml Can)","ko":"타이거 맥주 (330ml)","zh":"虎牌啤酒(330ml)","ru":"Пиво Тайгер"},"price":"24.000","img":"tiger-nau-lon-330ml.jpg"},
+{"names":{"vi":"Tiger bạc (lon 330ml)","en":"Tiger Crystal Beer (330ml Can)","ko":"타이거 크리스탈 맥주 (330ml캔)","zh":"虎牌水晶啤酒(330ml罐)","ru":"Тигровое Crystal (330ml)"},"price":"24.000","img":"tiger-bac-lon-330ml.jpg"},
+{"names":{"vi":"Tiger bạc (chai 330ml)","en":"Tiger Crystal Beer (330ml Bottle)","ko":"타이거 크리스탈 맥주 (330ml병)","zh":"虎牌水晶啤酒(330ml瓶)","ru":"Тигровое Crystal бутылка"},"price":"24.000","img":"tiger-bac-chai-330ml.jpg"},
+{"names":{"vi":"Heineken xanh (chai 330ml)","en":"Heineken Original Beer","ko":"하이네켄 오리지날 (330ml병)","zh":"喜力啤酒(330ml瓶)","ru":"Пиво Heineken"},"price":"24.000","img":"heineken-xanh-chai-330ml.jpg"},
+{"names":{"vi":"Heineken bạc (chai 330ml)","en":"Heineken Silver Beer","ko":"하이네켄 실버 (330ml병)","zh":"喜力银（330ml瓶）","ru":"Heineken Silver"},"price":"24.000","img":"heineken-bac-chai-330ml.jpg"},
+{"names":{"vi":"Heineken 0 độ","en":"Heineken 0.0 Alcohol-Free Beer","ko":"하이네켄 무알코올","zh":"喜力零度啤酒","ru":"Heineken безалкогольное"},"price":"26.000","img":"heineken-0-do.jpg"},
+{"names":{"vi":"Khăn lạnh","en":"Wet Towel","ko":"물티슈","zh":"湿巾","ru":"Влажная салфетка"},"price":"3.000"}]}
+];
+
         let currentLang = 'vi';
+        let currentSearch = '';
 
         const localization = {
             'vi': {
@@ -404,7 +613,6 @@
                 'kgText': '/kg',
                 'conText': '/con',
                 'mpText': 'Theo thời giá',
-                'viewMenu': 'Xem thực đơn',
                 'searchPlaceholder': 'Tìm món ăn...',
                 'noResultsTitle': 'Không tìm thấy món nào',
                 'noResultsDesc': 'Thử tìm với từ khóa khác nhé',
@@ -417,7 +625,6 @@
                 'kgText': '/kg',
                 'conText': '/pc',
                 'mpText': 'Market Price',
-                'viewMenu': 'View Menu',
                 'searchPlaceholder': 'Search for a dish...',
                 'noResultsTitle': 'No dishes found',
                 'noResultsDesc': 'Try a different search term',
@@ -430,7 +637,6 @@
                 'kgText': '/kg',
                 'conText': '/마리',
                 'mpText': '시가 기준',
-                'viewMenu': '메뉴보기',
                 'searchPlaceholder': '메뉴 검색...',
                 'noResultsTitle': '검색 결과가 없습니다',
                 'noResultsDesc': '다른 검색어로 시도해 보세요',
@@ -443,7 +649,6 @@
                 'kgText': '/公斤',
                 'conText': '/只',
                 'mpText': '时价',
-                'viewMenu': '查看菜单',
                 'searchPlaceholder': '搜索菜品...',
                 'noResultsTitle': '未找到相关菜品',
                 'noResultsDesc': '请尝试其他关键词',
@@ -456,12 +661,23 @@
                 'kgText': '/кг',
                 'conText': '/шт',
                 'mpText': 'Рыночная цена',
-                'viewMenu': 'Посмотреть меню',
                 'searchPlaceholder': 'Поиск блюда...',
                 'noResultsTitle': 'Блюда не найдены',
                 'noResultsDesc': 'Попробуйте другой запрос',
                 'resultsCount': (n) => `Найдено блюд: ${n}`
             }
+        };
+
+        // Cách chế biến (ghi chú trong ngoặc ở nhóm HẢI SẢN) — dịch sang 5 ngôn ngữ
+        const methodMap = {
+            'hap xi dau': { vi: 'Hấp xì dầu', en: 'Steamed with soy sauce', ko: '간장 찜', zh: '豉油蒸', ru: 'На пару с соевым соусом' },
+            'chien gion': { vi: 'Chiên giòn', en: 'Deep-fried', ko: '바삭 튀김', zh: '香酥炸', ru: 'Во фритюре' },
+            'canh chua': { vi: 'Canh chua', en: 'Sour soup', ko: '새콤한 생선국', zh: '酸汤', ru: 'Кислый суп' },
+            'lau': { vi: 'Lẩu', en: 'Hotpot', ko: '전골', zh: '火锅', ru: 'Хотпот' },
+            'sashimi': { vi: 'Sashimi', en: 'Sashimi', ko: '사시미', zh: '刺身', ru: 'Сашими' },
+            'nuong muoi ot': { vi: 'Nướng muối ớt', en: 'Grilled with chili salt', ko: '고추소금 구이', zh: '辣椒盐烤', ru: 'На гриле с чили-солью' },
+            'hap mien': { vi: 'Hấp miến', en: 'Steamed with glass noodles', ko: '당면 찜', zh: '蒸粉丝', ru: 'На пару с фунчозой' },
+            'nuong sot xi dau': { vi: 'Nướng sốt xì dầu', en: 'Grilled with soy sauce', ko: '간장소스 구이', zh: '豉油汁烤', ru: 'На гриле с соевым соусом' }
         };
 
         // ---- Category icon families (for dish image placeholders) ----
@@ -508,13 +724,11 @@
         }
 
         const thumbGradients = [
-            'from-brand-teal/25 to-brand-gold/15',
-            'from-brand-gold/25 to-brand-teal/10',
-            'from-brand-crimson/15 to-brand-gold/15',
-            'from-brand-teal/15 to-brand-crimson/10'
+            'from-brand-orange/25 to-brand-teal/15',
+            'from-brand-teal/25 to-brand-orange/15',
+            'from-brand-orange/15 to-brand-creamDeep',
+            'from-brand-teal/15 to-brand-orangeSoft'
         ];
-
-        let currentSearch = '';
 
         function normalizeStr(str) {
             return (str || '')
@@ -532,7 +746,41 @@
             const q = normalizeStr(query);
             const nameCurrent = normalizeStr(item.names[currentLang] || item.names['vi']);
             const nameVi = normalizeStr(item.names['vi']);
-            return nameCurrent.includes(q) || nameVi.includes(q);
+            const nameEn = normalizeStr(item.names['en']);
+            return nameCurrent.includes(q) || nameVi.includes(q) || nameEn.includes(q);
+        }
+
+        // Tách giá thành: số tiền + đơn vị + ghi chú cách chế biến (nếu có)
+        function buildPrice(raw) {
+            const L = localization[currentLang];
+            let note = '';
+            let value = (raw || '').trim();
+
+            const m = value.match(/^([^()]+?)\s*\(([^)]*)\)\s*$/);
+            if (m) {
+                value = m[1].trim();
+                note = m[2].split('/').map(part => {
+                    const key = normalizeStr(part);
+                    return methodMap[key] ? methodMap[key][currentLang] : part.trim();
+                }).join(' • ');
+            }
+
+            const upper = value.toUpperCase();
+            let html;
+            if (upper === 'MP' || upper === 'THEO THỜI GIÁ' || upper === 'THEO THỜI GIÁ/MP') {
+                html = `<span class="text-xs text-brand-orange font-semibold uppercase tracking-wider">${L.mpText}</span>`;
+            } else if (value.includes('/')) {
+                const parts = value.split('/');
+                const mainPrice = parts[0].trim();
+                const measure = parts[1].trim();
+                let measureText = measure;
+                if (measure === 'con') measureText = L.conText;
+                if (measure === 'kg') measureText = L.kgText;
+                html = `${mainPrice}<span class="text-xs text-brand-muted">${measureText}</span>`;
+            } else {
+                html = `${value} <span class="text-xs text-brand-muted">${L.unit}</span>`;
+            }
+            return { html, note };
         }
 
         function onSearchInput(value) {
@@ -552,20 +800,11 @@
         function selectLanguage(lang) {
             currentLang = lang;
             document.getElementById('lang-switcher').value = lang;
-            
-            // Set warnings/labels based on translation
             updateLocalizationText();
-            
-            // Render menu UI
             renderMenu();
 
-            // Hide cover and display menu
-            const cover = document.getElementById('cover-page');
-            const viewer = document.getElementById('menu-viewer');
-            
-            cover.classList.add('hidden');
-            viewer.classList.remove('hidden');
-            
+            document.getElementById('cover-page').classList.add('hidden');
+            document.getElementById('menu-viewer').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -576,12 +815,8 @@
         }
 
         function returnToCover() {
-            const cover = document.getElementById('cover-page');
-            const viewer = document.getElementById('menu-viewer');
-            
-            viewer.classList.add('hidden');
-            cover.classList.remove('hidden');
-            
+            document.getElementById('menu-viewer').classList.add('hidden');
+            document.getElementById('cover-page').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -592,10 +827,12 @@
             document.getElementById('search-input').placeholder = texts.searchPlaceholder;
             document.getElementById('no-results-title').textContent = texts.noResultsTitle;
             document.getElementById('no-results-desc').textContent = texts.noResultsDesc;
+            document.documentElement.lang = currentLang;
         }
 
         function renderMenu() {
             const sliderNav = document.getElementById('category-nav-slider');
+            const navWrap = document.getElementById('category-nav-wrap');
             const container = document.getElementById('menu-categories-container');
             const noResults = document.getElementById('no-results');
             const resultsCountEl = document.getElementById('search-results-count');
@@ -611,114 +848,85 @@
                 const catName = category.names[currentLang] || category.names['vi'];
                 const categoryId = `cat-section-${catIndex}`;
 
-                // Filter items for the current search query
                 const visibleItems = category.items.filter(item => itemMatchesSearch(item, query));
                 totalMatches += visibleItems.length;
 
-                if (query && visibleItems.length === 0) {
-                    // Nothing in this category matches — skip both nav button and section
-                    return;
-                }
+                if (query && visibleItems.length === 0) return;
                 visibleCategoryCount++;
 
-                // Render slider element
                 const navBtn = document.createElement('button');
-                navBtn.className = `px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border border-black/10 hover:border-brand-gold/30 hover:bg-white/60 text-gray-700 transition-all flex-shrink-0 bg-white/30`;
+                navBtn.className = 'px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border border-brand-ink/10 hover:border-brand-orange/40 hover:bg-white text-brand-ink/70 transition-all flex-shrink-0 bg-white/50 whitespace-nowrap';
                 navBtn.id = `nav-btn-${catIndex}`;
                 navBtn.textContent = catName;
                 navBtn.onclick = () => {
                     const target = document.getElementById(categoryId);
                     if (target) {
-                        // scroll-margin-top (set dynamically in updateStickyOffsets) keeps this
-                        // clear of the sticky header + category bar automatically
                         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                        // Set active style instantly
-                        document.querySelectorAll('#category-nav-slider button').forEach(b => b.classList.remove('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60'));
-                        navBtn.classList.add('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60');
+                        document.querySelectorAll('#category-nav-slider button').forEach(b => b.classList.remove('active-dot', 'text-brand-orange', 'border-brand-orange/40', 'bg-white'));
+                        navBtn.classList.add('active-dot', 'text-brand-orange', 'border-brand-orange/40', 'bg-white');
                     }
                 };
                 sliderNav.appendChild(navBtn);
 
-                // Build category layout block
                 const catSection = document.createElement('section');
                 catSection.id = categoryId;
-                catSection.className = "scroll-mt-[190px]";
+                catSection.className = 'scroll-mt-[190px] min-w-0';
 
                 const iconPath = getCategoryIcon(category.names['vi']);
 
-                // Title header
                 let titleHtml = `
-                    <div class="flex items-center gap-4 mb-8 border-b border-brand-teal/20 pb-4">
-                        <div class="w-2 h-8 bg-brand-gold rounded-full"></div>
-                        <div>
-                            <h2 class="text-2xl md:text-3xl font-bold font-serif text-black uppercase tracking-tight">${catName}</h2>
-                            <p class="text-xs text-brand-gold font-medium uppercase tracking-wider">${category.names['vi']}</p>
+                    <div class="flex items-center gap-3 sm:gap-4 mb-6 border-b border-brand-teal/25 pb-4 min-w-0">
+                        <div class="w-2 h-8 bg-brand-orange rounded-full flex-shrink-0"></div>
+                        <div class="min-w-0">
+                            <h2 class="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-brand-ink uppercase tracking-tight wrap-anywhere">${catName}</h2>
+                            ${currentLang !== 'vi' ? `<p class="text-xs text-brand-orange font-medium uppercase tracking-wider wrap-anywhere">${category.names['vi']}</p>` : ''}
                         </div>
                     </div>
                 `;
 
-                // Grid layout
-                let gridHtml = `<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">`;
+                let gridHtml = '<div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-2 md:gap-y-3">';
 
                 visibleItems.forEach((item, itemIndex) => {
                     const itemName = item.names[currentLang] || item.names['vi'];
                     const originalName = item.names['vi'];
                     const gradient = thumbGradients[(catIndex + itemIndex) % thumbGradients.length];
-                    
-                    // Format standard/special prices smoothly
-                    let priceDisplay = item.price;
-                    if (priceDisplay.includes('/')) {
-                        const parts = priceDisplay.split('/');
-                        const mainPrice = parts[0].trim();
-                        const measure = parts[1].trim();
-                        let measureText = measure;
-                        if (measure === 'con') measureText = localization[currentLang].conText;
-                        if (measure === 'kg') measureText = localization[currentLang].kgText;
-                        priceDisplay = `${mainPrice}<span class="text-xs text-gray-500">${measureText}</span>`;
-                    } else if (priceDisplay.toUpperCase() === 'THEO THỜI GIÁ/MP' || priceDisplay.toUpperCase() === 'THEO THỜI GIÁ' || priceDisplay.toUpperCase() === 'MP') {
-                        priceDisplay = `<span class="text-xs text-brand-gold font-semibold uppercase tracking-wider">${localization[currentLang].mpText}</span>`;
-                    } else {
-                        priceDisplay = `${priceDisplay} <span class="text-xs text-gray-500">${localization[currentLang].unit}</span>`;
-                    }
+                    const price = buildPrice(item.price);
 
                     gridHtml += `
-                        <div class="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-black/5 transition-all duration-300">
-                            <!-- Image placeholder: swap the inner <svg> for a real <img> later -->
-                            <div class="dish-thumb w-16 h-16 md:w-[72px] md:h-[72px] rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center border border-black/5">
-                                <svg class="w-7 h-7 md:w-8 md:h-8 text-brand-charcoal/35 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-brand-orange/5 transition-all duration-300 min-w-0">
+                            <div class="dish-thumb relative w-14 h-14 sm:w-16 sm:h-16 md:w-[72px] md:h-[72px] rounded-xl overflow-hidden bg-gradient-to-br ${gradient} flex items-center justify-center border border-brand-ink/5">
+                                <svg class="w-7 h-7 md:w-8 md:h-8 text-brand-ink/35 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     ${iconPath}
                                 </svg>
+                                ${item.img ? `<img src="dishes/${item.img}" alt="" loading="lazy" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover z-20">` : ''}
                             </div>
                             <div class="flex-grow min-w-0">
-                                <div class="flex items-start justify-between w-full">
-                                    <span class="text-black font-medium group-hover:text-brand-gold transition-colors text-base leading-tight">
+                                <div class="flex items-start justify-between w-full gap-2 min-w-0">
+                                    <span class="text-brand-ink font-medium group-hover:text-brand-orange transition-colors text-[15px] sm:text-base leading-snug wrap-anywhere min-w-0">
                                         ${itemName}
                                     </span>
                                     <span class="menu-dots hidden md:block"></span>
-                                    <span class="text-black font-bold text-right font-mono text-base ml-4 flex-shrink-0">
-                                        ${priceDisplay}
+                                    <span class="text-brand-ink font-bold text-right text-[15px] sm:text-base flex-shrink-0 whitespace-nowrap">
+                                        ${price.html}
                                     </span>
                                 </div>
-                                <!-- Show Vietnamese name subtext if not in Vietnamese view -->
-                                ${currentLang !== 'vi' ? `<span class="text-xs text-gray-500 italic mt-0.5 block">${originalName}</span>` : ''}
+                                ${currentLang !== 'vi' ? `<span class="text-xs text-brand-muted italic mt-0.5 block wrap-anywhere">${originalName}</span>` : ''}
+                                ${price.note ? `<span class="text-[11px] sm:text-xs text-brand-tealDark mt-1 block wrap-anywhere">${price.note}</span>` : ''}
                             </div>
                         </div>
                     `;
                 });
 
-                gridHtml += `</div>`;
+                gridHtml += '</div>';
                 catSection.innerHTML = titleHtml + gridHtml;
                 container.appendChild(catSection);
             });
 
-            // Toggle "no results" state
             const hasResults = !query || visibleCategoryCount > 0;
             noResults.classList.toggle('hidden', hasResults);
             container.classList.toggle('hidden', !hasResults);
-            sliderNav.classList.toggle('hidden', !hasResults && !!query);
+            navWrap.classList.toggle('hidden', !hasResults && !!query);
 
-            // Results counter under the search bar (kept in-flow so header height never jumps)
             if (query) {
                 resultsCountEl.textContent = localization[currentLang].resultsCount(totalMatches);
                 resultsCountEl.classList.remove('opacity-0');
@@ -726,19 +934,16 @@
                 resultsCountEl.classList.add('opacity-0');
             }
 
-            // Recompute sticky offsets once layout has settled, then sync scroll-spy highlighting
             requestAnimationFrame(() => {
                 updateStickyOffsets();
                 initScrollSpy();
             });
         }
 
-        // Keeps the category slider pinned exactly below the header, and makes sure
-        // clicking a category / scrolling never hides content under the sticky bars —
-        // recalculated because header height can vary slightly by language.
+        // Giữ dải danh mục luôn nằm ngay dưới header, và canh vị trí cuộn cho đúng
         function updateStickyOffsets() {
             const header = document.getElementById('menu-header');
-            const nav = document.getElementById('category-nav-slider');
+            const nav = document.getElementById('category-nav-wrap');
             if (!header || !nav) return;
             const headerH = header.offsetHeight;
             nav.style.top = headerH + 'px';
@@ -748,45 +953,45 @@
             });
         }
 
+        let spyObserver = null;
+
         function initScrollSpy() {
+            if (spyObserver) spyObserver.disconnect();
+
             const sections = document.querySelectorAll('#menu-categories-container section');
             const navButtons = document.querySelectorAll('#category-nav-slider button');
             const header = document.getElementById('menu-header');
-            const nav = document.getElementById('category-nav-slider');
+            const nav = document.getElementById('category-nav-wrap');
             const topMargin = (header ? header.offsetHeight : 150) + (nav ? nav.offsetHeight : 50) + 10;
 
-            const observerOptions = {
-                root: null,
-                rootMargin: `-${topMargin}px 0px -60% 0px`,
-                threshold: 0
-            };
-
-            const observer = new IntersectionObserver((entries) => {
+            spyObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const index = Array.from(sections).indexOf(entry.target);
-                        navButtons.forEach(btn => btn.classList.remove('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60'));
-                        
+                        navButtons.forEach(btn => btn.classList.remove('active-dot', 'text-brand-orange', 'border-brand-orange/40', 'bg-white'));
                         if (navButtons[index]) {
-                            navButtons[index].classList.add('active-dot', 'text-brand-gold', 'border-brand-gold/30', 'bg-white/60');
-                            // Center active nav button in slider view smoothly
-                            navButtons[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                            navButtons[index].classList.add('active-dot', 'text-brand-orange', 'border-brand-orange/40', 'bg-white');
+                            const wrap = document.getElementById('category-nav-wrap');
+                            if (wrap) {
+                                // Cuộn dải danh mục theo chiều ngang bên trong khung, không kéo cả trang
+                                const btn = navButtons[index];
+                                const target = btn.offsetLeft - (wrap.clientWidth / 2) + (btn.offsetWidth / 2);
+                                wrap.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+                            }
                         }
                     }
                 });
-            }, observerOptions);
+            }, { root: null, rootMargin: `-${topMargin}px 0px -60% 0px`, threshold: 0 });
 
-            sections.forEach(section => observer.observe(section));
+            sections.forEach(section => spyObserver.observe(section));
         }
 
-        // Subtle shadow on the sticky header once the page scrolls
         window.addEventListener('scroll', () => {
             const header = document.getElementById('menu-header');
             if (!header) return;
             header.classList.toggle('is-scrolled', window.scrollY > 12);
         }, { passive: true });
 
-        // Keep sticky offsets accurate across viewport/orientation changes
         window.addEventListener('resize', () => {
             const viewer = document.getElementById('menu-viewer');
             if (viewer && !viewer.classList.contains('hidden')) {
